@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
     await ContactMessage.create({ name, email, subject, message })
     return NextResponse.json({ success: true })
   } catch (err) {
+    console.error("Contact API error:", err)
     return NextResponse.json({ error: 'Failed to save message.' }, { status: 500 })
   }
 }

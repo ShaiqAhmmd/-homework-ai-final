@@ -2,13 +2,12 @@
 import React, { useRef, useState } from 'react'
 import Tesseract from 'tesseract.js'
 
-export default function QuestionForm({
-  question,
-  setQuestion,
-}: {
+type Props = {
   question: string
   setQuestion: (q: string) => void
-}) {
+}
+
+export default function QuestionForm({ question, setQuestion }: Props) {
   const [image, setImage] = useState<File | null>(null)
   const [ocrLoading, setOcrLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -35,9 +34,7 @@ export default function QuestionForm({
     setOcrLoading(true)
     try {
       const { data } = await Tesseract.recognize(file, 'eng', {
-        logger: m => {
-          // Optional: console.log(m)
-        }
+        logger: () => {}
       })
       setQuestion(data.text.trim())
     } catch (err) {

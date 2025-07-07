@@ -1,7 +1,13 @@
 import Link from "next/link";
 import WaitlistForm from '../components/WaitlistForm'
 
-const features = [
+type Feature = {
+  label: string;
+  free: string;
+  pro: string;
+};
+
+const features: Feature[] = [
   { label: "AI answers (per day)", free: "50", pro: "Unlimited" },
   { label: "Image OCR (photo to text)", free: "✓", pro: "✓" },
   { label: "Real-time chat", free: "✓", pro: "✓" },
@@ -27,7 +33,7 @@ export default function PricingSection() {
           <div className="text-4xl font-extrabold mb-4">$0</div>
           <ul className="mb-6 w-full">
             {features.map(f => (
-              <li key={f.label} className="flex justify-between py-1 border-b last:border-b-0 text-gray-700">
+              <li key={`free-${f.label}`} className="flex justify-between py-1 border-b last:border-b-0 text-gray-700">
                 <span>{f.label}</span>
                 <span>{f.free}</span>
               </li>
@@ -41,15 +47,17 @@ export default function PricingSection() {
           </button>
         </div>
         {/* Pro Plan */}
-        <div className="inline-block bg-yellow-200 text-yellow-800 text-xs font-bold px-2 py-1 rounded ml-2 align-middle">
-  Coming Soon
-</div>
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-80 flex flex-col items-center border-2 border-purple-400 scale-105">
-          <h3 className="text-2xl font-bold mb-2 text-purple-600">Pro</h3>
+          <h3 className="text-2xl font-bold mb-2 text-purple-600 flex items-center">
+            Pro
+            <span className="inline-block bg-yellow-200 text-yellow-800 text-xs font-bold px-2 py-1 rounded ml-2 align-middle">
+              Coming Soon
+            </span>
+          </h3>
           <div className="text-4xl font-extrabold mb-4">$9<span className="text-lg font-normal">/mo</span></div>
           <ul className="mb-6 w-full">
             {features.map(f => (
-              <li key={f.label} className="flex justify-between py-1 border-b last:border-b-0 text-gray-700">
+              <li key={`pro-${f.label}`} className="flex justify-between py-1 border-b last:border-b-0 text-gray-700">
                 <span>{f.label}</span>
                 <span>{f.pro}</span>
               </li>

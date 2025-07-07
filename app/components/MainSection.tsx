@@ -38,6 +38,8 @@ export default function MainSection() {
       else setError(data.error || 'No answer received.')
     } catch (err) {
       setError('Failed to get AI answer.')
+      // Optionally log the error for debugging:
+      // console.error(err);
     }
     setLoading(false)
   }

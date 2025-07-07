@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     const messages = await ContactMessage.find().sort({ createdAt: -1 }).lean()
     return NextResponse.json({ messages })
   } catch (err) {
+    console.error("Contact Messages API error:", err)
     return NextResponse.json({ error: 'Failed to fetch messages.' }, { status: 500 })
   }
 }

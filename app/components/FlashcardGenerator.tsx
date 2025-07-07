@@ -1,13 +1,15 @@
 'use client'
 import { useState } from "react";
 
+type Flashcard = { q: string; a: string };
+
 export default function FlashcardGenerator() {
   const [input, setInput] = useState("");
-  const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleGenerate(e: React.FormEvent) {
+  async function handleGenerate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -23,15 +25,17 @@ export default function FlashcardGenerator() {
       });
       const data = await res.json();
       // Parse the AI response into flashcards
-      const cards: { q: string; a: string }[] = [];
+      const cards: Flashcard[] = [];
       const regex = /Q:\s*(.*?)\s*A:\s*(.*?)(?=Q:|$)/gis;
-      let match;
+      let match: RegExpExecArray | null;
       while ((match = regex.exec(data.answer || "")) !== null) {
         cards.push({ q: match[1].trim(), a: match[2].trim() });
       }
       setFlashcards(cards);
     } catch (err) {
       setError("Failed to generate flashcards.");
+      // Optionally log the error for debugging:
+      // console.error(err);
     }
     setLoading(false);
   }

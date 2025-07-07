@@ -7,7 +7,7 @@ export default function EssayGrader() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleGrade(e: React.FormEvent) {
+  async function handleGrade(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -25,6 +25,8 @@ export default function EssayGrader() {
       setGrade(data.answer || "Sorry, could not grade.");
     } catch (err) {
       setError("Failed to grade essay.");
+      // Optionally log the error for debugging:
+      // console.error(err);
     }
     setLoading(false);
   }
