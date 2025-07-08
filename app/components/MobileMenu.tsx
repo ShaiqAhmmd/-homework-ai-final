@@ -1,47 +1,35 @@
 'use client'
-import { Menu } from '@headlessui/react'
-import Link from 'next/link'
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
-import AuthButtons from './AuthButtons'
+import { useState } from "react";
+import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import AuthButtons from "./AuthButtons";
 
 export default function MobileMenu() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Menu as="div" className="relative">
-      <Menu.Button className="text-2xl px-2 py-1 rounded hover:bg-white/20 transition">⋯</Menu.Button>
-      <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right bg-white text-gray-900 rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-        <div className="py-1">
-          <Menu.Item>
-            {({ active }) => (
-              <Link href="/chat" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Chat</Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <Link href="/pricing" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Pricing</Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <Link href="/study-tools" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Study Tools</Link>
-            )}
-          </Menu.Item>
+    <div className="relative">
+      <button
+        className="text-2xl px-2 py-1 rounded hover:bg-white/20 transition"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Open menu"
+      >
+        ⋯
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-44 bg-white text-gray-900 rounded shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+          <Link href="/chat" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setOpen(false)}>Chat</Link>
+          <Link href="/pricing" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setOpen(false)}>Pricing</Link>
+          <Link href="/study-tools" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setOpen(false)}>Study Tools</Link>
           <SignedIn>
-            <Menu.Item>
-              {({ active }) => (
-                <Link href="/profile" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Profile</Link>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {() => <UserButton afterSignOutUrl="/" />}
-            </Menu.Item>
+            <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100" onClick={() => setOpen(false)}>Profile</Link>
+            <div className="px-4 py-2"><UserButton afterSignOutUrl="/" /></div>
           </SignedIn>
           <SignedOut>
-            <Menu.Item>
-              {() => <AuthButtons />}
-            </Menu.Item>
+            <div className="px-4 py-2"><AuthButtons /></div>
           </SignedOut>
-        </div> 
-      </Menu.Items>
-    </Menu>
-  )
-}  
+        </div>
+      )}
+    </div>
+  );
+}
