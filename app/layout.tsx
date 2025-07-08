@@ -4,12 +4,7 @@ import AuthButtons from './components/AuthButtons'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
-import {
-  Menu,
-  MenuButton,
-  MenuItems,
-  MenuItem
-} from '@headlessui/react'
+import { Menu } from '@headlessui/react'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -45,41 +40,41 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {/* Mobile nav: 3-dots menu */}
             <div className="sm:hidden flex items-center">
               <Menu as="div" className="relative">
-                <MenuButton className="text-2xl px-2 py-1 rounded hover:bg-white/20 transition">⋯</MenuButton>
-                <MenuItems className="absolute right-0 mt-2 w-40 origin-top-right bg-white text-gray-900 rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <Menu.Button className="text-2xl px-2 py-1 rounded hover:bg-white/20 transition">⋯</Menu.Button>
+                <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right bg-white text-gray-900 rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                   <div className="py-1">
-                    <MenuItem>
+                    <Menu.Item>
                       {({ active }) => (
                         <Link href="/chat" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Chat</Link>
                       )}
-                    </MenuItem>
-                    <MenuItem>
+                    </Menu.Item>
+                    <Menu.Item>
                       {({ active }) => (
                         <Link href="/pricing" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Pricing</Link>
                       )}
-                    </MenuItem>
-                    <MenuItem>
+                    </Menu.Item>
+                    <Menu.Item>
                       {({ active }) => (
                         <Link href="/study-tools" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Study Tools</Link>
                       )}
-                    </MenuItem>
+                    </Menu.Item>
                     <SignedIn>
-                      <MenuItem>
+                      <Menu.Item>
                         {({ active }) => (
                           <Link href="/profile" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Profile</Link>
                         )}
-                      </MenuItem>
-                      <MenuItem>
+                      </Menu.Item>
+                      <Menu.Item>
                         {() => <UserButton afterSignOutUrl="/" />}
-                      </MenuItem>
+                      </Menu.Item>
                     </SignedIn>
                     <SignedOut>
-                      <MenuItem>
+                      <Menu.Item>
                         {() => <AuthButtons />}
-                      </MenuItem>
+                      </Menu.Item>
                     </SignedOut>
                   </div>
-                </MenuItems>
+                </Menu.Items>
               </Menu>
             </div>
           </header>
