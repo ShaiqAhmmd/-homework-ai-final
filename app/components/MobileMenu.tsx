@@ -6,7 +6,6 @@ import AuthButtons from "./AuthButtons";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
-
   return (
     <div className="relative">
       <button

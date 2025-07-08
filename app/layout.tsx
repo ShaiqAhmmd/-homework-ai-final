@@ -39,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
             {/* Mobile nav: 3-dots menu */}
             <div className="sm:hidden flex items-center">
-              <MobileMenu />
-            </div>
+  <MobileMenu />
+</div>
           </header>
           <main className="max-w-7xl mx-auto px-4 py-10 mt-20">
             {children}
