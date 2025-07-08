@@ -20,52 +20,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en">
         <body className={`${inter.className} bg-gray-50`}>
           {/* Sticky Header */}
-          <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 flex justify-between items-center shadow-md">
-            <Link
-              href="/main"
-              className="flex items-center gap-3 focus:outline-none"
-              aria-label="Go to main app"
-              prefetch={false}
-            >
-              <span className="text-2xl">🧠</span>
-              <h1 className="text-2xl font-bold">Homework AI</h1>
-            </Link>
-            <div className="flex items-center gap-6">
-              <span className="text-sm md:text-base text-white/90">
-                Your Intelligent Study Assistant
-              </span>
-              {/* Chat Button */}
-              <Link
-                href="/chat"
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition"
-              >
-                💬 Chat
-              </Link>
-              {/* Pricing Button */}
-              <Link
-                href="/pricing"
-                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition"
-              >
-                💎 Pricing
-              </Link>
-              {/* Study Tools Button */}
-              <Link
-                href="/study-tools"
-                className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition"
-              >
-                🧰 Study Tools
-              </Link>
-              {/* Show Profile link and avatar only when signed in */}
-              <SignedIn>
-                <Link href="/profile" className="text-white underline mr-2">Profile</Link>
-                <UserButton afterSignOutUrl="/" />
-              </SignedIn>
-              {/* Show sign in/up when signed out */}
-              <SignedOut>
-                <AuthButtons />
-              </SignedOut>
-            </div>
-          </header>
+          <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 sm:px-8 py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center shadow-md">
+  <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-start">
+    <span className="text-xl sm:text-2xl">🧠</span>
+    <h1 className="text-lg sm:text-2xl font-bold whitespace-nowrap">Homework AI</h1>
+  </div>
+  <nav className="flex flex-wrap items-center gap-3 sm:gap-6 justify-center sm:justify-end mt-1 sm:mt-0">
+    <a href="/chat" className="font-semibold hover:underline underline-offset-4 transition">Chat</a>
+    <a href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</a>
+    <a href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</a>
+    <SignedIn>
+      <a href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</a>
+      <UserButton afterSignOutUrl="/" />
+    </SignedIn>
+    <SignedOut>
+      <AuthButtons />
+    </SignedOut>
+  </nav>
+</header>
           {/* Main content with top margin to avoid header overlap */}
           <main className="max-w-7xl mx-auto px-4 py-10 mt-20">
             {children}
