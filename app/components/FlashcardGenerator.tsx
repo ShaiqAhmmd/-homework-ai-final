@@ -26,7 +26,7 @@ export default function FlashcardGenerator() {
       const data = await res.json();
       // Parse the AI response into flashcards
       const cards: Flashcard[] = [];
-      const regex = /Q:\s*(.*?)\s*A:\s*(.*?)(?=Q:|$)/gis;
+      const regex = /Q:\s*([\s\S]*?)\s*A:\s*([\s\S]*?)(?=Q:|$)/gi;
       let match: RegExpExecArray | null;
       while ((match = regex.exec(data.answer || "")) !== null) {
         cards.push({ q: match[1].trim(), a: match[2].trim() });
