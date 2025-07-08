@@ -10,14 +10,30 @@ export default function Header() {
         <span className="text-xl sm:text-2xl">🧠</span>
         <h1 className="text-lg sm:text-2xl font-bold whitespace-nowrap">Homework AI</h1>
       </div>
-      <nav className="flex items-center gap-2 sm:gap-6">
-        {/* Always visible links */}
+      {/* Desktop nav */}
+      <nav className="hidden sm:flex items-center gap-6">
         <Link href="/chat" className="font-semibold hover:underline underline-offset-4 transition">Chat</Link>
-        {/* "Extras" dropdown for mobile */}
-        <Menu as="div" className="relative inline-block text-left sm:hidden">
-          <Menu.Button className="px-2 py-1 rounded hover:bg-white/20 transition font-bold text-lg">⋯</Menu.Button>
+        <Link href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</Link>
+        <Link href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</Link>
+        <SignedIn>
+          <Link href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</Link>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+        <SignedOut>
+          <AuthButtons />
+        </SignedOut>
+      </nav>
+      {/* Mobile nav: 3-dots menu */}
+      <div className="sm:hidden flex items-center gap-2">
+        <Menu as="div" className="relative">
+          <Menu.Button className="text-2xl px-2 py-1 rounded hover:bg-white/20 transition">⋯</Menu.Button>
           <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right bg-white text-gray-900 rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
             <div className="py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/chat" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Chat</Link>
+                )}
+              </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
                   <Link href="/pricing" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Pricing</Link>
@@ -34,23 +50,19 @@ export default function Header() {
                     <Link href="/profile" className={`block px-4 py-2 ${active ? 'bg-gray-100' : ''}`}>Profile</Link>
                   )}
                 </Menu.Item>
+                <Menu.Item>
+                  {() => <UserButton afterSignOutUrl="/" />}
+                </Menu.Item>
               </SignedIn>
+              <SignedOut>
+                <Menu.Item>
+                  {() => <AuthButtons />}
+                </Menu.Item>
+              </SignedOut>
             </div>
           </Menu.Items>
         </Menu>
-        {/* Show all links on desktop */}
-        <div className="hidden sm:flex items-center gap-6">
-          <Link href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</Link>
-          <Link href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</Link>
-          <SignedIn>
-            <Link href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </div>
-        <SignedOut>
-          <AuthButtons />
-        </SignedOut>
-      </nav>
+      </div>
     </header>
   )
 }
