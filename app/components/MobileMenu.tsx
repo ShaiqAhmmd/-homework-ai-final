@@ -40,8 +40,8 @@ export default function MobileMenu() {
               {() => <AuthButtons />}
             </Menu.Item>
           </SignedOut>
-        </div>
+        </div> 
       </Menu.Items>
     </Menu>
   )
-}
+}  
