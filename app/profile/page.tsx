@@ -12,8 +12,8 @@ export default async function ProfilePage() {
   // ...referral logic...
 
   const referralLink = userId
-    ? `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}?ref=${userId}`
-    : "";
+  ? `https://homework-ai-v2.vercel.app/?ref=${userId}`
+  : "";
 
   return (
     <div className="max-w-2xl mx-auto py-10">
