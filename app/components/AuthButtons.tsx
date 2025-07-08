@@ -1,20 +1,15 @@
 'use client'
-import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default function AuthButtons() {
   return (
-    <div className="flex items-center gap-2">
-      <SignedOut>
-        <SignInButton mode="modal">
-          <button className="bg-blue-500 text-white px-4 py-1 rounded mr-2">Sign In</button>
-        </SignInButton>
-        <SignUpButton mode="modal">
-          <button className="bg-gray-200 text-gray-800 px-4 py-1 rounded">Sign Up</button>
-        </SignUpButton>
-      </SignedOut>
-      <SignedIn>
-        <UserButton afterSignOutUrl="/" />
-      </SignedIn>
+    <div className="flex gap-2">
+      <SignInButton mode="modal">
+        <span className="font-semibold underline cursor-pointer hover:text-blue-200">Sign In</span>
+      </SignInButton>
+      <SignUpButton mode="modal">
+        <span className="font-semibold underline cursor-pointer hover:text-blue-200">Sign Up</span>
+      </SignUpButton>
     </div>
   );
 }
