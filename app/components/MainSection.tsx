@@ -64,7 +64,7 @@ export default function MainSection() {
           <QuestionForm
             question={question}
             setQuestion={setQuestion}
-            onKeyDown={handleKeyDown} // Pass keydown handler
+            onKeyDown={handleKeyDown}
           />
           {answer && (
             <div className="bg-white border rounded-md p-4 mt-4 text-gray-800 whitespace-pre-line">
