@@ -1,5 +1,3 @@
-// app/components/TestimonialsSection.tsx
-
 const testimonials = [
   {
     stars: 5,
@@ -37,11 +35,11 @@ export default function TestimonialsSection() {
       <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
         What Our Users Say
       </h2>
-      <div className="flex flex-wrap justify-center gap-8">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-8">
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl shadow p-8 w-80 flex flex-col"
+            className="bg-white rounded-xl shadow p-8 w-full sm:w-80 flex flex-col"
           >
             <Stars count={t.stars} />
             <p className="text-gray-700 mb-6">{t.text}</p>

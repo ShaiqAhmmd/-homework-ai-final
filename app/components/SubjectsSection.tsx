@@ -1,31 +1,9 @@
-// app/components/SubjectsSection.tsx
-
 const subjects = [
-  {
-    icon: "👦🏻",
-    title: "Math",
-    desc: "Algebra • Calculus",
-  },
-  {
-    icon: "👩‍🔬",
-    title: "Science",
-    desc: "Physics • Chemistry",
-  },
-  {
-    icon: "🧑‍🏫",
-    title: "History",
-    desc: "World • US",
-  },
-  {
-    icon: "👩‍🎓",
-    title: "Literature",
-    desc: "Analysis • Essays",
-  },
-  {
-    icon: "🧑‍🗣️",
-    title: "Languages",
-    desc: "Spanish • French",
-  },
+  { icon: "🧮", title: "Math", desc: "Algebra • Calculus" },
+  { icon: "🔬", title: "Science", desc: "Physics • Chemistry" },
+  { icon: "🏛️", title: "History", desc: "World • US" },
+  { icon: "📚", title: "Literature", desc: "Analysis • Essays" },
+  { icon: "🗣️", title: "Languages", desc: "Spanish • French" },
 ];
 
 export default function SubjectsSection() {

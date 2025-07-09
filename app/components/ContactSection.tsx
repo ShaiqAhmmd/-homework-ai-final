@@ -104,7 +104,6 @@ export default function ContactSection() {
             {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
-
         {/* Contact Info */}
         <div className="bg-white rounded-xl shadow p-8 flex-1 space-y-4">
           <div>
