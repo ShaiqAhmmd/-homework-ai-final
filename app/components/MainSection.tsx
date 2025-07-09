@@ -20,6 +20,7 @@ export default function MainSection() {
   ]
 
   async function handleGenerate() {
+    if (!question.trim()) return
     setLoading(true)
     setError(null)
     setAnswer(null)
@@ -41,6 +42,13 @@ export default function MainSection() {
     setLoading(false)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleGenerate()
+    }
+  }
+
   return (
     <section className="space-y-8 sm:space-y-10">
       {/* Minimal Welcome */}
@@ -53,7 +61,11 @@ export default function MainSection() {
       </div>
       <div className="flex flex-col md:flex-row gap-6 md:gap-10 max-w-5xl mx-auto">
         <div className="md:w-2/3 space-y-6">
-          <QuestionForm question={question} setQuestion={setQuestion} />
+          <QuestionForm
+            question={question}
+            setQuestion={setQuestion}
+            onKeyDown={handleKeyDown} // Pass keydown handler
+          />
           {answer && (
             <div className="bg-white border rounded-md p-4 mt-4 text-gray-800 whitespace-pre-line">
               <b>AI Answer:</b>
@@ -75,6 +87,16 @@ export default function MainSection() {
         </div>
       </div>
       <TipsCard />
+      {/* Sticky Generate Button for Mobile */}
+      <div className="fixed bottom-0 left-0 w-full bg-white p-4 shadow-inner md:hidden">
+        <button
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 rounded-lg shadow hover:opacity-90 transition"
+          onClick={handleGenerate}
+          disabled={loading || !question.trim()}
+        >
+          {loading ? 'Generating...' : 'Generate Answer'}
+        </button>
+      </div>
     </section>
   )
 }

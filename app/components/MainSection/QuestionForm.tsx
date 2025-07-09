@@ -5,9 +5,10 @@ import Tesseract from 'tesseract.js'
 type Props = {
   question: string
   setQuestion: (q: string) => void
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-export default function QuestionForm({ question, setQuestion }: Props) {
+export default function QuestionForm({ question, setQuestion, onKeyDown }: Props) {
   const [image, setImage] = useState<File | null>(null)
   const [ocrLoading, setOcrLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -37,7 +38,7 @@ export default function QuestionForm({ question, setQuestion }: Props) {
         logger: () => {}
       })
       setQuestion(data.text.trim())
-    } catch (err) {
+    } catch {
       alert('Failed to extract text from image.')
     }
     setOcrLoading(false)
@@ -55,6 +56,7 @@ export default function QuestionForm({ question, setQuestion }: Props) {
           placeholder="Paste your question here (e.g. 'Solve for x: 3x + 5 = 20')"
           value={question}
           onChange={e => setQuestion(e.target.value)}
+          onKeyDown={onKeyDown}
         />
       </div>
 
