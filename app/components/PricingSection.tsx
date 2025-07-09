@@ -4,9 +4,9 @@ const features = [
   { label: "AI answers (per day)", free: "25", pro: "Unlimited" },
   { label: "Image OCR (photo to text)", free: "✓", pro: "✓" },
   { label: "Real-time chat", free: "✓", pro: "✓" },
-  { label: "PDF upload & summary", free: "✗", pro: "✓" },
+  { label: "PDF upload & summary", free: "✓", pro: "✓" },
   { label: "Save question history", free: "✓", pro: "✓" },
-  { label: "Priority AI speed", free: "✓", pro: "✓" },
+  { label: "Priority AI speed", free: "✗", pro: "✓" },
   { label: "Email support", free: "✗", pro: "✓" },
 ];
 
