@@ -4,7 +4,6 @@ import pdf from 'pdf-parse'
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth() || {}
-
   if (!userId) {
     return NextResponse.json({ error: 'Not signed in' }, { status: 401 })
   }
