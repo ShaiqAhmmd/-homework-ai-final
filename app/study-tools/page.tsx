@@ -22,11 +22,11 @@ export default function StudyToolsPage() {
       try {
         setLoading(true)
         const base64 = reader.result
-        const res = await fetch('/api/pdf-analyzer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pdf: base64 }),
-        })
+        const res = await fetch('/api/analyze-pdf', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ pdf: base64 }),
+})
 
         const data = await res.json()
         setOutput(data.result || 'No summary returned.')

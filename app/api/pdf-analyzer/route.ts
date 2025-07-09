@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
 
     const data = await aiRes.json()
     const result = data?.choices?.[0]?.message?.content
-
     return NextResponse.json({ result })
   } catch (err) {
     console.error('❌ PDF parse error:', err)
