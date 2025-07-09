@@ -13,7 +13,7 @@ export default function Home() {
       <SubjectsSection />
       <TestimonialsSection />
       <FAQSection />
-   <PricingSection/>
+      <PricingSection />
       <ContactSection />
       <SocialShareButtons />
     </>
