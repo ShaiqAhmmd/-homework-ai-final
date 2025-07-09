@@ -4,6 +4,7 @@ import TestimonialsSection from '../components/TestimonialsSection'
 import FAQSection from '../components/FAQSection'
 import ContactSection from '../components/ContactSection'
 import SocialShareButtons from '../components/SocialShareButtons'
+import PricingSection from '../components/PricingSection'
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <SubjectsSection />
       <TestimonialsSection />
       <FAQSection />
+   <PricingSection/>
       <ContactSection />
       <SocialShareButtons />
     </>
