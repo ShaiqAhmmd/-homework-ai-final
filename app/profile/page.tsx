@@ -18,7 +18,11 @@ export default async function ProfilePage() {
   const referralLink = userId
   ? `https://homework-ai-v2.vercel.app/?ref=${userId}`
   : "";
-
+<Link href="/profile/history">
+  <button className="w-full bg-indigo-600 text-white py-3 rounded-lg mt-6 font-semibold hover:bg-indigo-700 transition">
+    🧠 View My History
+  </button>
+</Link>
   return (
     <div className="max-w-2xl mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
