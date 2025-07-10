@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import ExportPDFButton from './ExportPDFButton'
+import ExportCSVButton from './ExportCSVButton'
 
 type QuizQuestion = {
   question: string
@@ -40,7 +42,8 @@ export default function StudyQuizGenerator() {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow max-w-3xl mx-auto">
+    <section className="py-12">
+      <h2 className="text-2xl font-bold mb-4">AI Study Quiz Generator</h2>
       <textarea
         rows={4}
         placeholder="Enter a topic or passage to generate quiz questions..."
@@ -74,6 +77,6 @@ export default function StudyQuizGenerator() {
           ))}
         </div>
       )}
-    </div>
+    </section>
   )
 }
