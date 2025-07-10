@@ -6,6 +6,7 @@ import ExportCSVButton from './ExportCSVButton'
 
 export default function EssayGrader() {
   const [input, setInput] = useState('')
+  const [grade, setGrade] = useState('')
   const [feedback, setFeedback] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -15,6 +16,7 @@ export default function EssayGrader() {
     if (!input.trim()) return
     setLoading(true)
     setError(null)
+    setGrade('')
     setFeedback('')
 
     try {
@@ -24,13 +26,16 @@ export default function EssayGrader() {
         body: JSON.stringify({ essay: input }),
       })
       const data = await res.json()
-      if (data.feedback) {
-        setFeedback(data.feedback)
-      } else {
-        setError('Failed to grade essay.')
-      }
+
+      // Parse grade and feedback from AI response
+      const gradeMatch = data.feedback.match(/Grade:\s*(\d+\/\d+)/i)
+      const parsedGrade = gradeMatch ? gradeMatch[1] : ''
+      const parsedFeedback = data.feedback.replace(/Grade:\s*\d+\/\d+/i, '').replace(/Feedback:\s*/i, '').trim()
+
+      setGrade(parsedGrade)
+      setFeedback(parsedFeedback)
     } catch {
-      setError('Error grading essay.')
+      setError('Failed to grade essay.')
     } finally {
       setLoading(false)
     }
@@ -57,6 +62,10 @@ export default function EssayGrader() {
         </button>
 
         {error && <p className="text-red-600">{error}</p>}
+
+        {grade && (
+          <div className="mt-4 font-semibold text-lg">Grade: {grade}</div>
+        )}
 
         {feedback && (
           <>

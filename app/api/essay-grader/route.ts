@@ -8,7 +8,16 @@ export async function POST(req: NextRequest) {
   const { essay } = await req.json()
   if (!essay) return NextResponse.json({ error: 'No essay provided' }, { status: 400 })
 
-  const prompt = `Grade this essay out of 10 and provide constructive feedback:\n\n${essay}`
+  const prompt = `
+Grade this essay out of 10 and provide a short constructive comment:
+
+${essay}
+
+Format your response as:
+
+Grade: X/10
+Feedback: Your detailed feedback here.
+`
 
   const res = await fetch('https://api.together.xyz/v1/chat/completions', {
     method: 'POST',
@@ -22,13 +31,13 @@ export async function POST(req: NextRequest) {
         { role: 'system', content: 'You are a helpful AI essay grader.' },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 500,
+      max_tokens: 600,
       temperature: 0.7,
     }),
   })
 
   const data = await res.json()
-  const feedback = data?.choices?.[0]?.message?.content || ''
+  const content = data?.choices?.[0]?.message?.content || ''
 
-  return NextResponse.json({ feedback })
+  return NextResponse.json({ feedback: content })
 }
