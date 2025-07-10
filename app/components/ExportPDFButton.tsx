@@ -8,7 +8,7 @@ type Props = {
   filename?: string
 }
 
-export default function ExportPDFButton({ content, filename = 'homework-answer.pdf' }: Props) {
+export default function ExportPDFButton({ content, filename = 'export.pdf' }: Props) {
   const handleExport = () => {
     const doc = new jsPDF()
     const pageHeight = doc.internal.pageSize.height
@@ -35,7 +35,7 @@ export default function ExportPDFButton({ content, filename = 'homework-answer.p
     <button
       onClick={handleExport}
       className="ml-4 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-      title="Export answer as PDF"
+      title="Export as PDF"
     >
       Export PDF
     </button>
