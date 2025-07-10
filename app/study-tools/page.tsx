@@ -19,13 +19,11 @@ export default function StudyToolsPage() {
       <div className="max-w-3xl mx-auto space-y-12">
         {/* Flashcard Generator */}
         <section>
-          <h2 className="text-2xl font-bold mb-4">AI Flashcard Generator</h2>
           <FlashcardGenerator />
         </section>
 
         {/* Essay Grader */}
         <section>
-          <h2 className="text-2xl font-bold mb-4">AI Essay Grader</h2>
           <EssayGrader />
         </section>
 
