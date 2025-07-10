@@ -9,14 +9,17 @@ export async function POST(req: NextRequest) {
   if (!essay) return NextResponse.json({ error: 'No essay provided' }, { status: 400 })
 
   const prompt = `
-Grade this essay out of 10 and provide a short constructive comment:
+Please grade the following essay out of 10 and provide constructive feedback.
 
+Respond ONLY in JSON format like this:
+
+{
+  "grade": "9/10",
+  "feedback": "Your essay is well structured and covers the topic thoroughly..."
+}
+
+Essay:
 ${essay}
-
-Format your response as:
-
-Grade: X/10
-Feedback: Your detailed feedback here.
 `
 
   const res = await fetch('https://api.together.xyz/v1/chat/completions', {
@@ -39,5 +42,17 @@ Feedback: Your detailed feedback here.
   const data = await res.json()
   const content = data?.choices?.[0]?.message?.content || ''
 
-  return NextResponse.json({ feedback: content })
+  let grade = ''
+  let feedback = ''
+
+  try {
+    const parsed = JSON.parse(content)
+    grade = parsed.grade || ''
+    feedback = parsed.feedback || ''
+  } catch {
+    // fallback if parsing fails
+    feedback = content
+  }
+
+  return NextResponse.json({ grade, feedback })
 }

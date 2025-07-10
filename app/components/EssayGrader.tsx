@@ -26,14 +26,8 @@ export default function EssayGrader() {
         body: JSON.stringify({ essay: input }),
       })
       const data = await res.json()
-
-      // Parse grade and feedback from AI response
-      const gradeMatch = data.feedback.match(/Grade:\s*(\d+\/\d+)/i)
-      const parsedGrade = gradeMatch ? gradeMatch[1] : ''
-      const parsedFeedback = data.feedback.replace(/Grade:\s*\d+\/\d+/i, '').replace(/Feedback:\s*/i, '').trim()
-
-      setGrade(parsedGrade)
-      setFeedback(parsedFeedback)
+      setGrade(data.grade || '')
+      setFeedback(data.feedback || '')
     } catch {
       setError('Failed to grade essay.')
     } finally {
