@@ -1,9 +1,11 @@
 'use client'
+
 import { useState } from 'react'
-import SuggestionButtons from './MainSection/SuggestionButtons'
+import ExportPDFButton from '../components/ExportPDFButton'
 import QuestionForm from './MainSection/QuestionForm'
 import ResponseStyleButtons from './MainSection/ResponseStyleButtons'
 import TipsCard from './MainSection/TipsCard'
+import SuggestionButtons from './MainSection/SuggestionButtons'
 
 export default function MainSection() {
   const [question, setQuestion] = useState('')
@@ -20,10 +22,10 @@ export default function MainSection() {
   ]
 
   async function handleGenerate() {
-    if (!question.trim()) return
     setLoading(true)
     setError(null)
     setAnswer(null)
+
     try {
       const res = await fetch('/api/ai-answer', {
         method: 'POST',
@@ -33,49 +35,48 @@ export default function MainSection() {
           style: styles[selectedStyle],
         }),
       })
+
       const data = await res.json()
       if (data.answer) setAnswer(data.answer)
       else setError(data.error || 'No answer received.')
     } catch (err) {
       setError('Failed to get AI answer.')
     }
+
     setLoading(false)
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleGenerate()
-    }
-  }
-
   return (
-    <section className="space-y-8 sm:space-y-10">
-      {/* Minimal Welcome */}
-      <div className="flex flex-col items-center justify-center mb-2 sm:mb-6">
-        <span className="text-2xl animate-bounce">👋</span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-2 mb-1 text-center">Welcome to Homework AI!</h2>
-        <p className="text-gray-600 text-base text-center">
-          Ask any question, upload an image, or just start typing below.
+    <section className="space-y-10">
+      {/* Top Title + Suggestions */}
+      <div className="bg-white rounded-xl shadow-md text-center p-6 md:p-8 max-w-3xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">👋 Welcome to Homework AI</h2>
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
+          Paste your question, upload an image, or start typing below. Your AI tutor is ready.
         </p>
+        <SuggestionButtons />
       </div>
-      <div className="flex flex-col md:flex-row gap-6 md:gap-10 max-w-5xl mx-auto">
+
+      {/* Question Form + Answer */}
+      <div className="flex flex-col md:flex-row gap-10 max-w-5xl mx-auto px-4">
+        {/* Left: Question input and answer */}
         <div className="md:w-2/3 space-y-6">
-          <QuestionForm
-            question={question}
-            setQuestion={setQuestion}
-            onKeyDown={handleKeyDown}
-          />
+          <QuestionForm question={question} setQuestion={setQuestion} />
+
           {answer && (
-            <div className="bg-white border rounded-md p-4 mt-4 text-gray-800 whitespace-pre-line">
-              <b>AI Answer:</b>
-              <div>{answer}</div>
+            <div className="bg-white border rounded-md p-4 mt-4 text-gray-800 whitespace-pre-line flex items-start justify-between">
+              <div>
+                <b>AI Answer:</b>
+                <div>{answer}</div>
+              </div>
+              <ExportPDFButton content={answer} />
             </div>
           )}
-          {error && (
-            <div className="text-red-500 mt-2">{error}</div>
-          )}
+
+          {error && <div className="text-red-500 mt-2">{error}</div>}
         </div>
+
+        {/* Right: Style buttons + generate */}
         <div className="md:w-1/3 space-y-6">
           <ResponseStyleButtons
             selected={selectedStyle}
@@ -86,17 +87,8 @@ export default function MainSection() {
           />
         </div>
       </div>
+
       <TipsCard />
-      {/* Sticky Generate Button for Mobile */}
-      <div className="fixed bottom-0 left-0 w-full bg-white p-4 shadow-inner md:hidden">
-        <button
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 rounded-lg shadow hover:opacity-90 transition"
-          onClick={handleGenerate}
-          disabled={loading || !question.trim()}
-        >
-          {loading ? 'Generating...' : 'Generate Answer'}
-        </button>
-      </div>
     </section>
   )
 }
