@@ -1,36 +1,43 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@clerk/nextjs'
 import FlashcardGenerator from '../components/FlashcardGenerator'
 import EssayGrader from '../components/EssayGrader'
-import PDFUploader from '../components/PDFUploader' // We'll create this component next
+import { useUser } from '@clerk/nextjs'
+import Link from 'next/link'
 
 export default function StudyToolsPage() {
   const { user } = useUser()
   const isPro = user?.publicMetadata?.isPro === true
 
-  const [extractedText, setExtractedText] = useState('')
-  const [aiResult, setAiResult] = useState('')
+  const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleAnalyze(text: string) {
-    setLoading(true)
-    setAiResult('')
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
-    try {
-      const res = await fetch('/api/ai-analyze-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      })
-      const data = await res.json()
-      setAiResult(data.result)
-    } catch {
-      setAiResult('Failed to analyze text.')
-    } finally {
-      setLoading(false)
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        setLoading(true)
+        const base64 = reader.result
+        const res = await fetch('/api/analyze-pdf', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ pdf: base64 }),
+})
+
+        const data = await res.json()
+        setOutput(data.result || 'No summary returned.')
+      } catch (err) {
+        alert('Failed to process PDF')
+      } finally {
+        setLoading(false)
+      }
     }
+
+    reader.readAsDataURL(file)
   }
 
   return (
@@ -40,45 +47,49 @@ export default function StudyToolsPage() {
       </h1>
 
       <div className="max-w-3xl mx-auto space-y-12">
-        {/* Flashcard Generator */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4">AI Flashcard Generator</h2>
+        {/* 🧠 Flashcard Generator */}
+        <div>
           <FlashcardGenerator />
-        </section>
+        </div>
 
-        {/* Essay Grader */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4">AI Essay Grader</h2>
+        {/* ✍️ Essay Grader */}
+        <div>
           <EssayGrader />
-        </section>
+        </div>
 
-        {/* PDF Homework Analyzer */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4">📄 PDF Homework Analyzer</h2>
+        {/* 📄 Pro-only PDF Homework Analyzer */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4 mt-14">📄 PDF Homework Analyzer</h2>
           {!isPro ? (
             <div className="bg-white p-6 rounded shadow text-center">
               <p className="text-gray-600 mb-4">
                 This feature is only available for <strong>Pro users</strong>.
               </p>
-              <a
+              <Link
                 href="/pricing"
                 className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition"
               >
                 Upgrade to Pro
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="bg-white p-6 rounded shadow">
-              <PDFUploader onExtractedText={handleAnalyze} />
-              {loading && <p className="text-blue-500 mt-4">Analyzing PDF...</p>}
-              {aiResult && (
-                <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap mt-4 text-sm">
-                  {aiResult}
-                </pre>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleUpload}
+                className="mb-4 block w-full"
+              />
+
+              {loading && <p className="text-blue-500 mb-4">Analyzing PDF...</p>}
+              {output && (
+                <div className="bg-gray-100 p-4 rounded whitespace-pre-wrap text-sm">
+                  {output}
+                </div>
               )}
             </div>
           )}
-        </section>
+        </div>
       </div>
     </div>
   )
