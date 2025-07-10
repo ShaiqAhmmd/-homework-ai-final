@@ -2,10 +2,10 @@ import { auth } from '@clerk/nextjs/server'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Referral from '@/models/Referral'
-import User from '@/models/User' // Import your User model
+import User from '@/models/User'
 import { connectToDatabase } from '@/lib/mongoose'
 import ReferralLink from '../components/ReferralLink'
-import { Schema } from 'mongoose'
+import { sendProUpgradeEmail } from '@/lib/sendEmail' // Your email helper
 
 export default async function ProfilePage() {
   const { userId } = await auth() || {}
@@ -25,22 +25,22 @@ export default async function ProfilePage() {
     if (!alreadyReferred) {
       await Referral.create({ referrer: ref, newUser: userId })
 
-      const UserSchema = new Schema({
-  userId: { type: String, required: true, unique: true },
-  referralCount: { type: Number, default: 0 },
-  isPro: { type: Boolean, default: false },
-  // other fields...
-})
-
       // Update referral count and upgrade to Pro if needed
       const user = await User.findOne({ userId: ref })
       if (user) {
         user.referralCount = (user.referralCount || 0) + 1
         if (user.referralCount >= 3 && !user.isPro) {
           user.isPro = true
-          // Optionally send notification email here
+          await user.save()
+
+          try {
+            await sendProUpgradeEmail(user.email, user.name || 'Student')
+          } catch (err) {
+            console.error('Failed to send Pro upgrade email:', err)
+          }
+        } else {
+          await user.save()
         }
-        await user.save()
       }
     }
 
