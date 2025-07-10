@@ -29,7 +29,6 @@ export default function StudyToolsPage() {
 
         {/* Study Quiz Generator - Pro gated */}
         <section>
-          <h2 className="text-2xl font-bold mb-4">AI Study Quiz Generator</h2>
           {!isPro ? (
             <div className="bg-white p-6 rounded shadow text-center">
               <p className="text-gray-600 mb-4">

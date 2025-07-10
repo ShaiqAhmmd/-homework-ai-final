@@ -27,7 +27,16 @@ export default function FlashcardGenerator() {
       })
       const data = await res.json()
       if (data.flashcards) {
-        setFlashcards(data.flashcards)
+        // Improved parsing logic
+        const cards: Flashcard[] = []
+        const lines = data.flashcards.join('\n').split('\n').filter((line: string) => line.trim() !== '')
+
+        for (let i = 0; i < lines.length; i += 2) {
+          const q = lines[i]?.replace(/^Q:\s*/i, '').trim() || ''
+          const a = lines[i + 1]?.replace(/^A:\s*/i, '').trim() || ''
+          if (q && a) cards.push({ q, a })
+        }
+        setFlashcards(cards)
       } else {
         setError('Failed to generate flashcards.')
       }
