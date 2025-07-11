@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-const shareUrl = 'https://homework-ai-final.vercel.app/' // Replace with your actual BASE URL
-const shareText = encodeURIComponent("Try this AI that does your homework crazy fast! 💯👏")
+const shareUrl = 'https://homework-ai-final.vercel.app/'
+const shareText = encodeURIComponent("Try this AI that does your homework crazy fast! 💯🦾")
 
 export default function SocialShareButtons() {
   const [copied, setCopied] = useState(false)
@@ -17,11 +17,9 @@ export default function SocialShareButtons() {
   return (
     <section className="w-full py-16 px-4 bg-white dark:bg-neutral-900">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
-          Share with Friends
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">Share with Friends</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
-          Spread the word and help others discover Homework AI. Let's make studying smart.
+          Spread the word and help others discover Homework AI. Let’s make studying smart.
         </p>
 
         <div className="flex flex-wrap justify-center gap-3">
@@ -33,7 +31,7 @@ export default function SocialShareButtons() {
           </button>
 
           <a
-            href={`https://wa.me/?text=${shareText} %0A${shareUrl}`}
+            href={`https://wa.me/?text=${shareText}%0A${shareUrl}`}
             target="_blank"
             className="bg-green-200 text-green-900 px-4 py-2 text-sm rounded hover:bg-green-300"
           >

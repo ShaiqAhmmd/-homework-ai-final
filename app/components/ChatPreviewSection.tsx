@@ -4,9 +4,7 @@ export default function ChatPreviewSection() {
   return (
     <section className="bg-white dark:bg-neutral-900 py-16 px-4">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-          See It In Action
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">See It In Action</h2>
         <p className="text-gray-600 dark:text-gray-300">
           Watch how our AI breaks down complex problems into easy-to-understand steps
         </p>
@@ -25,7 +23,7 @@ export default function ChatPreviewSection() {
           </div>
         </div>
 
-        {/* Chat Messages */}
+        {/* Chat Content */}
         <div className="p-6 space-y-6 text-left">
           {/* User Message */}
           <div className="flex items-start gap-2">
@@ -51,12 +49,12 @@ export default function ChatPreviewSection() {
             </div>
           </div>
 
-          {/* AI Follow-up Answer */}
+          {/* AI Reply 2 */}
           <div className="flex items-start gap-2">
             <div className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-4 py-3 rounded-lg rounded-br-none max-w-md">
-              Sure! Let's verify it by taking the derivative:
-              <br />
-              d/dx(x³ / 3 + C) = x² ✅
+              Sure! Let’s verify it by taking the derivative:  
+              <br />  
+              d/dx(x³ / 3 + C) = x² ✅  
               <br />
               It matches, so it's correct! 🎉
             </div>
@@ -64,5 +62,5 @@ export default function ChatPreviewSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }

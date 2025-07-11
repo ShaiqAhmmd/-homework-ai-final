@@ -37,8 +37,7 @@ export default function MainSection() {
       })
 
       const data = await res.json()
-      if (data.answer) setAnswer(data.answer)
-      else setError(data.error || 'No answer received.')
+      data.answer ? setAnswer(data.answer) : setError(data.error || 'No answer received.')
     } catch (err) {
       setError('Failed to get AI answer.')
     }
@@ -46,57 +45,52 @@ export default function MainSection() {
     setLoading(false)
   }
 
-return (
-  <section className="py-12 px-4 bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-    {/* Hero + Form Layout */}
-    <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10 max-w-7xl mx-auto">
+  return (
+    <section className="w-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+      <div className="flex flex-col-reverse lg:flex-row max-w-7xl mx-auto px-4 py-20 gap-10">
+        {/* LEFT - Hero Text */}
+        <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+            Got a Hard Question? <br />
+            <span className="text-yellow-300">Let AI Solve It.</span>
+          </h2>
+          <p className="text-white/90 text-base sm:text-lg max-w-md mx-auto lg:mx-0">
+            Paste your question, upload an image, or start typing below. Your AI tutor is ready 24/7.
+          </p>
+          <SuggestionButtons />
+        </div>
 
-      {/* LEFT: Hero Text */}
-      <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
-          Got a Hard Question? <br />
-          <span className="text-yellow-300">Let AI Solve It.</span>
-        </h2>
-        <p className="text-white/90 text-base sm:text-lg max-w-md mx-auto lg:mx-0">
-          Paste your question, upload an image, or start typing below. Your AI tutor is ready 24/7.
-        </p>
-        <SuggestionButtons />
-      </div>
+        {/* RIGHT - Question Form */}
+        <div className="w-full lg:w-[450px] bg-white dark:bg-neutral-900 text-black dark:text-white rounded-xl p-6 shadow-md">
+          <QuestionForm question={question} setQuestion={setQuestion} />
 
-      {/* RIGHT: Form + Generator */}
-      <div className="w-full lg:w-[450px] bg-white dark:bg-neutral-900 text-black dark:text-white rounded-xl p-6 shadow-md">
-        {/* Question Form */}
-        <QuestionForm question={question} setQuestion={setQuestion} />
-
-        {/* Style Options + Generate Button */}
-        <div className="mt-6">
-          <ResponseStyleButtons
-            selected={selectedStyle}
-            setSelected={setSelectedStyle}
-            loading={loading}
-            onGenerate={handleGenerate}
-            disabled={!question}
-          />
+          <div className="mt-6">
+            <ResponseStyleButtons
+              selected={selectedStyle}
+              setSelected={setSelectedStyle}
+              loading={loading}
+              onGenerate={handleGenerate}
+              disabled={!question}
+            />
+          </div>
         </div>
       </div>
 
-    </div>
+      {/* Answer Output */}
+      <div className="max-w-5xl mx-auto mt-10 px-4">
+        {answer && (
+          <div className="bg-white dark:bg-neutral-900 border rounded p-4 mt-4 text-black dark:text-white whitespace-pre-line shadow-sm">
+            <b>📘 AI Answer:</b>
+            <div className="mt-2">{answer}</div>
+            <ExportPDFButton content={answer} />
+          </div>
+        )}
+        {error && (
+          <div className="text-red-500 mt-4">{error}</div>
+        )}
+      </div>
 
-    {/* AI Answer Output */}
-    <div className="max-w-5xl mx-auto mt-10 px-4">
-      {answer && (
-        <div className="bg-white dark:bg-neutral-900 border rounded p-4 mt-4 text-black dark:text-white whitespace-pre-line shadow-sm">
-          <b>📘 AI Answer:</b>
-          <div className="mt-2">{answer}</div>
-          <ExportPDFButton content={answer} />
-        </div>
-      )}
-      {error && (
-        <div className="text-red-500 mt-4">{error}</div>
-      )}
-    </div>
-
-    <TipsCard />
-  </section>
-);
+      <TipsCard />
+    </section>
+  )
 }

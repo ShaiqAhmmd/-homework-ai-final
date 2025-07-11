@@ -1,28 +1,27 @@
 'use client'
-
 import { useState } from 'react'
 
 const faqs = [
   {
     q: 'Is Homework AI cheating?',
-    a: 'No. It’s a study tool like a tutor — it helps you learn with step-by-step explanations.'
+    a: 'No. It’s a study tool like a tutor — it helps you learn with step-by-step explanations.',
   },
   {
     q: 'How accurate are the explanations?',
-    a: 'Very accurate, especially for math and science questions. But always double-check for your class!'
+    a: 'Very accurate, especially for math and science. But always double-check if it’s for grading!',
   },
   {
     q: 'What subjects are covered?',
-    a: 'Math, science, English, programming, history, and more are available — and we’re always adding more.'
+    a: 'Math, science, English, history, programming, and more — we’re always adding more.',
   },
   {
     q: 'Is my data secure?',
-    a: 'Yes. We do not save your questions — everything is private by design.'
+    a: 'Yes. We do not save your questions — it’s private by design.',
   },
   {
     q: 'Can I cancel anytime?',
-    a: 'You can cancel your Pro subscription anytime — no questions asked.'
-  }
+    a: 'You can cancel Pro any time. No hidden fees, no lock-in.',
+  },
 ]
 
 export default function FAQSection() {
@@ -34,7 +33,6 @@ export default function FAQSection() {
         <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">
           Frequently Asked Questions
         </h2>
-
         <div className="space-y-4">
           {faqs.map((item, i) => (
             <div
@@ -48,7 +46,6 @@ export default function FAQSection() {
                 {item.q}
                 <span>{openIndex === i ? '−' : '+'}</span>
               </button>
-
               {openIndex === i && (
                 <div className="mt-3 text-gray-600 dark:text-gray-300 text-sm">
                   {item.a}

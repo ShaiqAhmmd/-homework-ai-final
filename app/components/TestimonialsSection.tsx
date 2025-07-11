@@ -4,47 +4,45 @@ const testimonials = [
   {
     name: 'Sarah Chen',
     grade: '11th Grade · Calculus',
-    quote: 'Homework AI helped me solve a calculus problem I spent 3 hours on. The step-by-step explanation was clearer than my textbook!',
+    quote: 'Homework AI helped me solve a calculus problem I spent 3 hours on. The explanation was clearer than the textbook!',
     note: 'Saved 3 hours of frustration',
-    emoji: '👩‍🎓'
+    emoji: '🎓',
   },
   {
     name: 'Marcus Johnson',
     grade: 'College Freshman · Chemistry',
-    quote: 'Love the mobile chat-style interface. I can get help with organic chemistry reactions anywhere, even during my commute.',
+    quote: 'Love the mobile chat-style interface. I get help during commutes with homework reactions.',
     note: 'Perfect mobile experience',
-    emoji: '👨‍🔬'
+    emoji: '🧑‍🔬',
   },
   {
     name: 'Emily Rodriguez',
     grade: '10th Grade · English',
-    quote: 'The essay structure help is amazing. It breaks down my writing problems and gives specific suggestions for improvement.',
-    note: 'Improved essay grades',
-    emoji: '👩‍🏫'
+    quote: 'Essay structure help is amazing. It breaks down writing problems into actual solutions.',
+    note: 'Improved grades fast',
+    emoji: '👩‍🏫',
   },
   {
     name: 'Jake Thompson',
     grade: '12th Grade · Physics',
-    quote: 'Finally understand electricity and magnetism! The AI explains complex concepts in simple terms that actually make sense.',
-    note: 'Complex concepts simplified',
-    emoji: '🎓'
+    quote: 'Electricity used to confuse me. This finally makes it all make sense.',
+    note: 'Concepts simplified',
+    emoji: '⚡',
   },
   {
     name: 'Priya Patel',
     grade: 'College Sophomore · Programming',
-    quote: 'Debugging help is incredible. It finds errors in my code and explains why they happened. Better than Stack Overflow sometimes!',
-    note: 'Better than Stack Overflow',
-    emoji: '👩‍💻'
-  }
+    quote: 'It finds errors, explains them, and fixes them. Better than Stack Overflow!',
+    note: 'Best for debugging',
+    emoji: '💻',
+  },
 ]
 
 export default function TestimonialsSection() {
   return (
-    <section className="bg-gray-50 dark:bg-neutral-900 py-16 px-4">
+    <section className="w-full bg-gray-50 dark:bg-neutral-900 py-16 px-4">
       <div className="max-w-7xl mx-auto text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
-          What Students Say
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">What Students Say</h2>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
           Join thousands of students who've improved their grades with Homework AI
         </p>
