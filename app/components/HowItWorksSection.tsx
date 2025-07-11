@@ -2,39 +2,39 @@
 
 export default function HowItWorksSection() {
   return (
-    <section className="bg-gray-100 dark:bg-neutral-900 py-16 px-4">
+    <section className="w-full bg-white py-16 px-4">
       <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">How It Works</h2>
-        <p className="text-gray-600 dark:text-gray-300 mt-2">
-          Get homework help in three simple steps – it's that easy!
+        <h2 className="text-3xl font-bold text-gray-800">How It Works</h2>
+        <p className="text-gray-600 mt-2">
+          Get AI-powered homework help in just 3 simple steps.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-6xl mx-auto">
         {/* Step 1 */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6 text-center">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 text-center hover:shadow-md transition">
           <div className="text-4xl mb-4">📸</div>
-          <h3 className="font-semibold text-lg mb-1">Step 1: Snap or Type</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Upload a photo of your homework or type your question directly.
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">Step 1: Snap or Type</h3>
+          <p className="text-sm text-gray-600">
+            Upload a photo of your homework or just start typing the question.
           </p>
         </div>
 
         {/* Step 2 */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6 text-center">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 text-center hover:shadow-md transition">
           <div className="text-4xl mb-4">🧠</div>
-          <h3 className="font-semibold text-lg mb-1">Step 2: AI Analyzes</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Our AI reads, understands, and breaks down your problem step-by-step.
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">Step 2: AI Analyzes</h3>
+          <p className="text-sm text-gray-600">
+            Our AI understands, explains, and breaks down your question step-by-step.
           </p>
         </div>
 
         {/* Step 3 */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6 text-center">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 text-center hover:shadow-md transition">
           <div className="text-4xl mb-4">✅</div>
-          <h3 className="font-semibold text-lg mb-1">Step 3: Get Solution</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Get instant, clear solutions with optional follow-up questions.
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">Step 3: Get Solution</h3>
+          <p className="text-sm text-gray-600">
+            Get clear answers, explanations, and even follow-up help — instantly.
           </p>
         </div>
       </div>
