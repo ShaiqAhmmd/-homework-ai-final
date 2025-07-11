@@ -5,6 +5,7 @@ import FAQSection from '../components/FAQSection'
 import ContactSection from '../components/ContactSection'
 import SocialShareButtons from '../components/SocialShareButtons'
 import HowItWorksSection from '../components/HowItWorksSection'
+import ChatPreviewSection from '../components/ChatPreviewSection'
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <FAQSection />
       <ContactSection />
       <SocialShareButtons />
+      <ChatPreviewSection />
     </>
   )
 }
