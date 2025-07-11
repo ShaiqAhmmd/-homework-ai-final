@@ -1,55 +1,73 @@
+'use client'
+
 const testimonials = [
   {
-    stars: 5,
-    text: `“Homework AI saved me so much time on my math assignments. The step-by-step explanations actually helped me understand the concepts!”`,
-    name: "Sarah J.",
-    role: "High School Junior",
+    name: 'Sarah Chen',
+    grade: '11th Grade · Calculus',
+    quote: 'Homework AI helped me solve a calculus problem I spent 3 hours on. The step-by-step explanation was clearer than my textbook!',
+    note: 'Saved 3 hours of frustration',
+    emoji: '👩‍🎓'
   },
   {
-    stars: 5,
-    text: `“As a parent, I love how Homework AI helps my daughter learn while doing homework. It’s like having a personal tutor available 24/7.”`,
-    name: "Michael T.",
-    role: "Parent of 9th Grader",
+    name: 'Marcus Johnson',
+    grade: 'College Freshman · Chemistry',
+    quote: 'Love the mobile chat-style interface. I can get help with organic chemistry reactions anywhere, even during my commute.',
+    note: 'Perfect mobile experience',
+    emoji: '👨‍🔬'
   },
   {
-    stars: 5,
-    text: `“I use Homework AI to quickly check my work before submitting assignments. The explanations are clearer than my textbook!”`,
-    name: "Emma R.",
-    role: "College Freshman",
+    name: 'Emily Rodriguez',
+    grade: '10th Grade · English',
+    quote: 'The essay structure help is amazing. It breaks down my writing problems and gives specific suggestions for improvement.',
+    note: 'Improved essay grades',
+    emoji: '👩‍🏫'
   },
-];
-
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex mb-2">
-      {Array.from({ length: count }).map((_, i) => (
-        <span key={i} className="text-yellow-400 text-lg">★</span>
-      ))}
-    </div>
-  );
-}
+  {
+    name: 'Jake Thompson',
+    grade: '12th Grade · Physics',
+    quote: 'Finally understand electricity and magnetism! The AI explains complex concepts in simple terms that actually make sense.',
+    note: 'Complex concepts simplified',
+    emoji: '🎓'
+  },
+  {
+    name: 'Priya Patel',
+    grade: 'College Sophomore · Programming',
+    quote: 'Debugging help is incredible. It finds errors in my code and explains why they happened. Better than Stack Overflow sometimes!',
+    note: 'Better than Stack Overflow',
+    emoji: '👩‍💻'
+  }
+]
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-12">
-      <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
-        What Our Users Say
-      </h2>
-      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-8">
+    <section className="bg-gray-50 dark:bg-neutral-900 py-16 px-4">
+      <div className="max-w-7xl mx-auto text-center mb-12">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
+          What Students Say
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          Join thousands of students who've improved their grades with Homework AI
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl shadow p-8 w-full sm:w-80 flex flex-col"
+            className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border dark:border-gray-700"
           >
-            <Stars count={t.stars} />
-            <p className="text-gray-700 mb-6">{t.text}</p>
-            <div>
-              <div className="font-bold text-gray-900">{t.name}</div>
-              <div className="text-gray-500 text-sm">{t.role}</div>
-            </div>
+            <div className="text-3xl mb-2">{t.emoji}</div>
+            <h3 className="font-semibold text-gray-800 dark:text-white">{t.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{t.grade}</p>
+            <blockquote className="text-sm text-gray-700 dark:text-gray-300 italic mb-3">
+              "{t.quote}"
+            </blockquote>
+            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
+              {t.note}
+            </span>
           </div>
         ))}
       </div>
     </section>
-  );
+  )
 }
