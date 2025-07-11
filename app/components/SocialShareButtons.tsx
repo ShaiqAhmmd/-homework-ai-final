@@ -1,73 +1,74 @@
 'use client'
-import { useEffect, useState } from "react";
+
+import { useState } from 'react'
+
+const shareUrl = 'https://homework-ai-final.vercel.app/' // Replace with your actual BASE URL
+const shareText = encodeURIComponent("Try this AI that does your homework crazy fast! 💯👏")
 
 export default function SocialShareButtons() {
-  const [url, setUrl] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false)
 
-  useEffect(() => {
-    setUrl(window.location.href);
-  }, []);
-
-  function copyLink() {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
-  if (!url) return null;
-
-  const text = encodeURIComponent("Check out Homework AI – Instantly solve your toughest homework questions with AI!");
-  const shareUrl = encodeURIComponent(url);
-
   return (
-    <div className="flex flex-wrap gap-3 mt-6">
-      <button
-        onClick={copyLink}
-        className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition"
-      >
-        {copied ? "Copied!" : "Copy Link"}
-      </button>
-      <a
-        href={`https://wa.me/?text=${text}%20${shareUrl}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-green-100 text-green-700 px-4 py-2 rounded hover:bg-green-200 transition"
-      >
-        WhatsApp
-      </a>
-      <a
-        href={`https://twitter.com/intent/tweet?text=${text}&url=${shareUrl}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-blue-100 text-blue-700 px-4 py-2 rounded hover:bg-blue-200 transition"
-      >
-        Twitter/X
-      </a>
-      <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-blue-200 text-blue-900 px-4 py-2 rounded hover:bg-blue-300 transition"
-      >
-        Facebook
-      </a>
-      <a
-        href={`https://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}&title=${text}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-blue-50 text-blue-800 px-4 py-2 rounded hover:bg-blue-100 transition"
-      >
-        LinkedIn
-      </a>
-      <a
-        href={`https://t.me/share/url?url=${shareUrl}&text=${text}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-blue-300 text-blue-900 px-4 py-2 rounded hover:bg-blue-400 transition"
-      >
-        Telegram
-      </a>
-    </div>
-  );
+    <section className="w-full py-16 px-4 bg-white dark:bg-neutral-900">
+      <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
+          Share with Friends
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
+          Spread the word and help others discover Homework AI. Let's make studying smart.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-3">
+          <button
+            onClick={handleCopy}
+            className="px-4 py-2 text-sm rounded bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 text-gray-700 dark:text-white"
+          >
+            {copied ? 'Copied ✅' : 'Copy Link'}
+          </button>
+
+          <a
+            href={`https://wa.me/?text=${shareText} %0A${shareUrl}`}
+            target="_blank"
+            className="bg-green-200 text-green-900 px-4 py-2 text-sm rounded hover:bg-green-300"
+          >
+            WhatsApp
+          </a>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${shareText}%0A${shareUrl}`}
+            target="_blank"
+            className="bg-blue-100 text-blue-600 px-4 py-2 text-sm rounded hover:bg-blue-200"
+          >
+            Twitter/X
+          </a>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+            target="_blank"
+            className="bg-blue-100 text-blue-700 px-4 py-2 text-sm rounded hover:bg-blue-200"
+          >
+            Facebook
+          </a>
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
+            target="_blank"
+            className="bg-blue-100 text-blue-800 px-4 py-2 text-sm rounded hover:bg-blue-200"
+          >
+            LinkedIn
+          </a>
+          <a
+            href={`https://t.me/share/url?url=${shareUrl}&text=${shareText}`}
+            target="_blank"
+            className="bg-blue-100 text-blue-700 px-4 py-2 text-sm rounded hover:bg-blue-200"
+          >
+            Telegram
+          </a>
+        </div>
+      </div>
+    </section>
+  )
 }
