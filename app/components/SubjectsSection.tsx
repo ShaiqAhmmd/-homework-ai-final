@@ -1,26 +1,33 @@
+'use client'
+
 const subjects = [
-  { icon: "🧮", title: "Math", desc: "Algebra • Calculus" },
-  { icon: "🔬", title: "Science", desc: "Physics • Chemistry" },
-  { icon: "🏛️", title: "History", desc: "World • US" },
-  { icon: "📚", title: "Literature", desc: "Analysis • Essays" },
-  { icon: "🗣️", title: "Languages", desc: "Spanish • French" },
-];
+  { icon: '🧮', name: 'Mathematics' },
+  { icon: '🧪', name: 'Science' },
+  { icon: '📖', name: 'English' },
+  { icon: '🧬', name: 'Chemistry' },
+  { icon: '⚡', name: 'Physics' },
+  { icon: '💻', name: 'Programming' },
+  { icon: '🌍', name: 'Geography' },
+  { icon: '🏛️', name: 'History' }
+]
 
 export default function SubjectsSection() {
   return (
-    <section className="py-12">
-      <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
-        Subjects We Cover
-      </h2>
-      <div className="flex flex-wrap justify-center gap-6">
-        {subjects.map((s) => (
-          <div
-            key={s.title}
-            className="bg-white rounded-xl shadow p-8 flex flex-col items-center w-56 transition hover:scale-105"
-          >
-            <div className="text-5xl mb-3">{s.icon}</div>
-            <div className="font-bold text-lg text-gray-900 mb-1">{s.title}</div>
-            <div className="text-gray-500 text-sm">{s.desc}</div>
+    <section className="bg-gray-50 dark:bg-neutral-900 py-16 px-4">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Subjects We Cover</h2>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          From basic math to advanced science — get help with all your subjects.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-10 max-w-6xl mx-auto">
+        {subjects.map((subject, i) => (
+          <div key={i} className="bg-white dark:bg-neutral-800 border dark:border-gray-700 rounded-lg p-6 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition">
+            <div className="text-4xl mb-2">{subject.icon}</div>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-800 dark:text-white">
+              {subject.name}
+            </h3>
           </div>
         ))}
       </div>
