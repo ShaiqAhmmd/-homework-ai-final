@@ -6,6 +6,7 @@ import ContactSection from '../components/ContactSection'
 import SocialShareButtons from '../components/SocialShareButtons'
 import HowItWorksSection from '../components/HowItWorksSection'
 import ChatPreviewSection from '../components/ChatPreviewSection'
+import WhyChooseSection from '../components/WhyChooseSection'
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
        <HowItWorksSection />
        <ChatPreviewSection />
       <SubjectsSection />
+      <WhyChooseSection />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
