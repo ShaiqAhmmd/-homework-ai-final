@@ -12,12 +12,12 @@ export default function Home() {
     <>
       <MainSection />
        <HowItWorksSection />
+       <ChatPreviewSection />
       <SubjectsSection />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
       <SocialShareButtons />
-      <ChatPreviewSection />
     </>
   )
 }
