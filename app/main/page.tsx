@@ -4,11 +4,13 @@ import TestimonialsSection from '../components/TestimonialsSection'
 import FAQSection from '../components/FAQSection'
 import ContactSection from '../components/ContactSection'
 import SocialShareButtons from '../components/SocialShareButtons'
+import HowItWorksSection from '../components/HowItWorksSection'
 
 export default function Home() {
   return (
     <>
       <MainSection />
+       <HowItWorksSection />
       <SubjectsSection />
       <TestimonialsSection />
       <FAQSection />
