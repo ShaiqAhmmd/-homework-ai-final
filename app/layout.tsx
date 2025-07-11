@@ -1,6 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import FooterSection from './components/FooterSection'
 import AuthButtons from './components/AuthButtons'
+import DarkModeToggle from './components/DarkModeToggle'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
@@ -17,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} bg-gray-50`}>
+        <body
+          className={inter.className}
+          style={{ background: 'var(--bg)', color: 'var(--text)', minHeight: '100vh' }}
+        >
           <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 flex flex-wrap justify-between items-center shadow-md">
             <div className="flex items-center gap-2">
               <span className="text-xl">🧠</span>
@@ -34,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <SignedOut>
                 <AuthButtons />
               </SignedOut>
+              <DarkModeToggle />
             </nav>
           </header>
           <main className="max-w-7xl mx-auto px-4 py-10 mt-20">
