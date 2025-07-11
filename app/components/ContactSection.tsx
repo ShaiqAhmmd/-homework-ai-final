@@ -41,96 +41,113 @@ export default function ContactSection() {
   }
 
   return (
-    <section className="py-12">
-      <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
+  <section className="w-full bg-white dark:bg-neutral-900 py-16 px-4">
+    <div className="max-w-6xl mx-auto">
+      <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">
         Need Help? Contact Us
       </h2>
-      <div className="flex flex-col md:flex-row gap-8 max-w-4xl mx-auto">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Contact Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl shadow p-8 flex-1 space-y-4"
+          className="bg-gray-50 dark:bg-neutral-800 p-6 rounded-xl shadow-sm space-y-4"
         >
           <div>
-            <label className="block font-semibold mb-1">Name</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Name
+            </label>
             <input
-              className="w-full border border-gray-300 rounded-md p-2"
+              type="text"
               name="name"
+              required
               value={form.name}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-gray-800 dark:text-white outline-none"
             />
           </div>
+
           <div>
-            <label className="block font-semibold mb-1">Email</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email
+            </label>
             <input
-              className="w-full border border-gray-300 rounded-md p-2"
-              name="email"
               type="email"
+              name="email"
+              required
               value={form.email}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-gray-800 dark:text-white outline-none"
             />
           </div>
+
           <div>
-            <label className="block font-semibold mb-1">Subject</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Subject
+            </label>
             <select
-              className="w-full border border-gray-300 rounded-md p-2"
               name="subject"
               value={form.subject}
               onChange={handleChange}
+              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-gray-800 dark:text-white outline-none"
             >
               <option>General Question</option>
               <option>Technical Support</option>
+              <option>Usage Issue</option>
               <option>Feedback</option>
-              <option>Business Inquiry</option>
             </select>
           </div>
+
           <div>
-            <label className="block font-semibold mb-1">Message</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Message
+            </label>
             <textarea
-              className="w-full border border-gray-300 rounded-md p-2 min-h-[80px]"
               name="message"
+              rows={4}
+              required
               value={form.message}
               onChange={handleChange}
-              required
+              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-neutral-700 text-gray-800 dark:text-white outline-none"
             />
           </div>
+
           <button
             type="submit"
-            className="bg-gradient-to-r from-blue-400 to-purple-400 text-white font-semibold py-2 px-6 rounded-lg shadow hover:opacity-90 transition"
             disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded font-semibold hover:shadow-md transition"
           >
-            {loading ? "Sending..." : "Send Message"}
+            {loading ? 'Sending...' : 'Send Message'}
           </button>
         </form>
+
         {/* Contact Info */}
-        <div className="bg-white rounded-xl shadow p-8 flex-1 space-y-4">
+        <div className="bg-gray-50 dark:bg-neutral-800 p-6 rounded-xl shadow-sm flex flex-col justify-center space-y-4 text-gray-700 dark:text-gray-300">
           <div>
-            <div className="font-bold mb-2">Other Ways to Reach Us</div>
-            <div className="mb-2">
-              <span className="font-semibold">Email Support</span><br />
-              <a href="mailto:shaiqahmad33@gmail.com" className="text-blue-600 hover:underline">
-                shaiqahmad33@gmail.com
-              </a>
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Phone</span><br />
-              <a href="tel:03121496662" className="text-blue-600 hover:underline">
-                03121496662
-              </a>
-            </div>
-            <div>
-              <span className="font-semibold">Social</span><br />
-              <div className="flex gap-3 mt-1 text-2xl">
-                <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" title="Twitter">🐦</a>
-                <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" title="Instagram">📸</a>
-                <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">💼</a>
-              </div>
-            </div>
+            <h3 className="font-semibold mb-1 text-gray-800 dark:text-white">
+              Email Support
+            </h3>
+            <a href="mailto:shaiqahmad33@gmail.com" className="text-blue-500 underline">
+              shaiqahmad33@gmail.com
+            </a>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-1 text-gray-800 dark:text-white">Phone</h3>
+            <a href="tel:03121496662" className="text-blue-500 underline">
+              0312 149 6662
+            </a>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-1 text-gray-800 dark:text-white">
+              Social
+            </h3>
+            <p className="text-2xl">🐦 📷 💼</p>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+)
 }
