@@ -5,7 +5,7 @@ import Referral from '@/models/Referral'
 import User from '@/models/User'
 import { connectToDatabase } from '@/lib/mongoose'
 import ReferralLink from '../components/ReferralLink'
-import { sendProUpgradeEmail } from '@/lib/sendEmail' // Your email helper
+import { sendProUpgradeEmail } from '@/lib/sendEmail'
 
 export default async function ProfilePage() {
   const { userId } = await auth() || {}
@@ -15,33 +15,45 @@ export default async function ProfilePage() {
 
   if (userId && ref && userId !== ref) {
     await connectToDatabase()
+    console.log('Referral logic running', { userId, ref })
 
-    // Check if referral already exists to avoid duplicates
-    const alreadyReferred = await Referral.findOne({
-      referrer: ref,
-      newUser: userId,
-    })
+    try {
+      // Check if referral already exists to avoid duplicates
+      const alreadyReferred = await Referral.findOne({
+        referrer: ref,
+        newUser: userId,
+      })
+      console.log('Already referred:', alreadyReferred)
 
-    if (!alreadyReferred) {
-      await Referral.create({ referrer: ref, newUser: userId })
+      if (!alreadyReferred) {
+        await Referral.create({ referrer: ref, newUser: userId })
+        console.log('Referral created:', { referrer: ref, newUser: userId })
 
-      // Update referral count and upgrade to Pro if needed
-      const user = await User.findOne({ userId: ref })
-      if (user) {
-        user.referralCount = (user.referralCount || 0) + 1
-        if (user.referralCount >= 3 && !user.isPro) {
-          user.isPro = true
-          await user.save()
-
-          try {
-            await sendProUpgradeEmail(user.email, user.name || 'Student')
-          } catch (err) {
-            console.error('Failed to send Pro upgrade email:', err)
+        // Update referral count and upgrade to Pro if needed
+        const user = await User.findOne({ userId: ref })
+        if (user) {
+          user.referralCount = (user.referralCount || 0) + 1
+          console.log('Referral count updated:', user.referralCount)
+          if (user.referralCount >= 3 && !user.isPro) {
+            user.isPro = true
+            await user.save()
+            console.log('User upgraded to Pro:', user.userId)
+            try {
+              await sendProUpgradeEmail(user.email, user.name || 'Student')
+              console.log('Pro upgrade email sent')
+            } catch (err) {
+              console.error('Failed to send Pro upgrade email:', err)
+            }
+          } else {
+            await user.save()
+            console.log('User saved:', user.userId)
           }
         } else {
-          await user.save()
+          console.log('Referrer user not found:', ref)
         }
       }
+    } catch (err) {
+      console.error('Referral logic error:', err)
     }
 
     // Clear referral cookie
