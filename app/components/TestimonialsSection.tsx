@@ -4,43 +4,43 @@ const testimonials = [
   {
     name: 'Sarah Chen',
     grade: '11th Grade · Calculus',
-    quote: 'Homework AI helped me solve a calculus problem I spent 3 hours on. The explanation was clearer than the textbook!',
+    quote: 'Homework AI helped me solve a calculus problem I spent 3 hours on. The step-by-step explanation was clearer than my textbook!',
     note: 'Saved 3 hours of frustration',
     emoji: '🎓',
   },
   {
     name: 'Marcus Johnson',
     grade: 'College Freshman · Chemistry',
-    quote: 'Love the mobile chat-style interface. I get help during commutes with homework reactions.',
+    quote: 'Love the mobile chat-style interface — I get help while commuting!',
     note: 'Perfect mobile experience',
     emoji: '🧑‍🔬',
   },
   {
     name: 'Emily Rodriguez',
     grade: '10th Grade · English',
-    quote: 'Essay structure help is amazing. It breaks down writing problems into actual solutions.',
-    note: 'Improved grades fast',
-    emoji: '👩‍🏫',
+    quote: 'The essay structure help was amazing. Clean, clear, and improved grades fast.',
+    note: 'Improved essay grades',
+    emoji: '💡',
   },
   {
     name: 'Jake Thompson',
     grade: '12th Grade · Physics',
-    quote: 'Electricity used to confuse me. This finally makes it all make sense.',
+    quote: 'Finally understand electricity! The AI breaks it down in simple terms.',
     note: 'Concepts simplified',
     emoji: '⚡',
   },
   {
     name: 'Priya Patel',
     grade: 'College Sophomore · Programming',
-    quote: 'It finds errors, explains them, and fixes them. Better than Stack Overflow!',
-    note: 'Best for debugging',
-    emoji: '💻',
+    quote: 'Debugging help is insanely good. It’s better than Stack Overflow for some stuff.',
+    note: 'Better than Stack Overflow',
+    emoji: '👩‍💻',
   },
 ]
 
 export default function TestimonialsSection() {
   return (
-    <section className="w-full bg-gray-50 dark:bg-neutral-900 py-16 px-4">
+    <section className="w-full bg-white dark:bg-neutral-900 py-16 px-4">
       <div className="max-w-7xl mx-auto text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-800 dark:text-white">What Students Say</h2>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -52,13 +52,13 @@ export default function TestimonialsSection() {
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-sm border dark:border-gray-700"
+            className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border dark:border-gray-700 p-6"
           >
             <div className="text-3xl mb-2">{t.emoji}</div>
             <h3 className="font-semibold text-gray-800 dark:text-white">{t.name}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{t.grade}</p>
-            <blockquote className="text-sm text-gray-700 dark:text-gray-300 italic mb-3">
-              "{t.quote}"
+            <blockquote className="italic text-gray-700 dark:text-gray-300 mb-3">
+              “{t.quote}”
             </blockquote>
             <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
               {t.note}
