@@ -31,4 +31,7 @@ select,
 button {
   font-family: inherit;
   outline: none;
+  .gradient-hero {
+  background: linear-gradient(120deg, #2563eb 0%, #6366f1 100%);
+}
 }
