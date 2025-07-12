@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import pdfParse from 'pdf-parse'
 
-export const runtime = 'nodejs' // required for pdf-parse
+export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer())
   const data = await pdfParse(buffer)
 
-  // data.text = all text, data.numpages, etc.
   return NextResponse.json({
     text: data.text,
     numpages: data.numpages,
