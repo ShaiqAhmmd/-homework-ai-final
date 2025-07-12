@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import QuestionForm from './MainSection/QuestionForm'
-import ExportPDFButton from './ExportPDFButton'
+import ExportPDFButton from '../components/ExportPDFButton'
 import TipsCard from './MainSection/TipsCard'
 
 export default function MainSection() {
@@ -21,7 +21,7 @@ export default function MainSection() {
 
   async function handleGenerate() {
     if (!question || selectedStyle === null) {
-      setError('Please enter a question and select a subject/style.')
+      setError('Please enter a question and select a response style.')
       return
     }
 
@@ -51,8 +51,8 @@ export default function MainSection() {
 
   return (
     <section className="w-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white py-20 px-4">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-center">
-        {/* LEFT: Hero Content */}
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-start">
+        {/* LEFT SIDE */}
         <div className="w-full lg:w-1/2 text-center lg:text-left space-y-6">
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
             Got a Hard Question?
@@ -61,9 +61,10 @@ export default function MainSection() {
           </h1>
 
           <p className="text-white/90 text-base sm:text-lg max-w-md mx-auto lg:mx-0">
-            Homework AI helps you solve the most difficult math, science, and writing questions 24/7 with explainable AI.
+            Homework AI helps you solve your most difficult math, science, and writing questions 24/7 with explainable AI.
           </p>
 
+          {/* Suggestion Buttons */}
           <div className="flex flex-wrap justify-center lg:justify-start gap-2 pt-1">
             {[
               'What is the integral of x²?',
@@ -81,19 +82,19 @@ export default function MainSection() {
           </div>
         </div>
 
-        {/* RIGHT: Form Box */}
+        {/* RIGHT SIDE */}
         <div className="w-full lg:w-[460px] bg-white text-black p-6 rounded-2xl shadow-xl space-y-4">
-          {/* Form Title */}
+          {/* Title Area */}
           <div className="text-center">
             <div className="text-3xl">🧠</div>
             <h2 className="text-xl font-semibold mt-1">Start Solving Now</h2>
             <p className="text-sm text-gray-600">Upload your question or type it below</p>
           </div>
 
-          {/* Form Input Area */}
+          {/* Input + Upload area */}
           <QuestionForm question={question} setQuestion={setQuestion} />
 
-          {/* Subject (Optional) = Button Group */}
+          {/* Subject Style Selector */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
               Subject (Optional)
@@ -104,9 +105,9 @@ export default function MainSection() {
                 <button
                   key={i}
                   onClick={() => setSelectedStyle(i)}
-                  className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md border transition text-left ${
+                  className={`flex items-center justify-center px-3 py-2 text-sm rounded-md border text-center transition ${
                     selectedStyle === i
-                      ? 'bg-blue-100 border-blue-400 text-blue-800 font-semibold shadow-sm'
+                      ? 'bg-blue-100 border-blue-500 text-blue-800 font-semibold shadow-sm'
                       : 'bg-gray-100 border-gray-300 hover:bg-gray-200 text-gray-700'
                   }`}
                 >
@@ -126,26 +127,30 @@ export default function MainSection() {
                 : 'bg-gradient-to-r from-blue-300 to-purple-300 cursor-not-allowed'
             }`}
           >
-            {loading ? 'Generating Answer...' : '📥 Get My Answer'}
+            {loading ? 'Generating Answer...' : '🧠 Get My Answer'}
           </button>
 
-          {/* Optional Info */}
-          <p className="text-center text-xs text-gray-500 pt-2">
+          {/* Info Line */}
+          <div className="text-xs text-center text-gray-500 mt-1">
             ✅ Free to try &nbsp; • &nbsp; ⚡ Instant results
-          </p>
+          </div>
         </div>
       </div>
 
-      {/* ANSWER OUTPUT */}
-      {answer && (
-        <div className="max-w-4xl mx-auto mt-10 bg-white text-black p-5 rounded-lg shadow">
-          <b className="block mb-2">📘 AI Answer:</b>
-          <p className="whitespace-pre-line">{answer}</p>
-          <ExportPDFButton content={answer} />
-        </div>
-      )}
-      {error && <p className="text-red-200 mt-4 text-center">{error}</p>}
+      {/* AI Answer Output Section */}
+      <div className="max-w-4xl mx-auto mt-10 px-4">
+        {answer && (
+          <div className="bg-white text-black border p-5 rounded-lg shadow whitespace-pre-line">
+            <b className="block mb-2">📘 AI Answer:</b>
+            {answer}
+            <ExportPDFButton content={answer} />
+          </div>
+        )}
 
+        {error && <p className="text-red-200 mt-4 text-center">{error}</p>}
+      </div>
+
+      {/* Tips Card */}
       <TipsCard />
     </section>
   )
