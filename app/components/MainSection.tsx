@@ -50,9 +50,9 @@ export default function MainSection() {
   }
 
   return (
-    // ✅ OUTER FULL WIDTH GRADIENT CONTAINER THAT STRETCHES TO SCREEN EDGE
-    <div className="w-full bg-gradient-to-br from-blue-600 to-indigo-600">
-      <section className="max-w-7xl mx-auto px-4 text-white pt-20 pb-32">
+    // OUTER FULL WIDTH, FULL HEIGHT GRADIENT
+    <div className="w-full min-h-[700px] bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center">
+      <section className="w-full max-w-7xl mx-auto px-4 py-20">
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* LEFT SIDE */}
           <div className="w-full lg:w-1/2 text-center lg:text-left space-y-6">
@@ -92,10 +92,8 @@ export default function MainSection() {
               <p className="text-sm text-gray-600">Upload your question or type it below</p>
             </div>
 
-            {/* 📝 Question + Image Upload Form */}
             <QuestionForm question={question} setQuestion={setQuestion} />
 
-            {/* 🔘 Subject buttons */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700">
                 Subject (Optional)
@@ -105,7 +103,7 @@ export default function MainSection() {
                   <button
                     key={i}
                     onClick={() => setSelectedStyle(i)}
-                    className={`flex items-center justify-center px-3 py-2 text-sm rounded-md border text-center transition ${
+                    className={`px-3 py-2 text-sm rounded-md border transition ${
                       selectedStyle === i
                         ? 'bg-blue-100 border-blue-500 text-blue-800 font-semibold shadow-sm'
                         : 'bg-gray-100 border-gray-300 hover:bg-gray-200 text-gray-700'
@@ -117,7 +115,6 @@ export default function MainSection() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               onClick={handleGenerate}
               disabled={loading || !question || selectedStyle === null}
@@ -151,4 +148,4 @@ export default function MainSection() {
       </section>
     </div>
   )
-}
+}                
