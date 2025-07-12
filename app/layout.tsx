@@ -1,7 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import FooterSection from './components/FooterSection'
 import AuthButtons from './components/AuthButtons'
-import DarkModeToggle from './components/DarkModeToggle'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import AuthButtons from './AuthButtons'
-import DarkModeToggle from './DarkModeToggle'
 
 export default function HeaderSection() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -24,7 +23,6 @@ export default function HeaderSection() {
           <Link href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</Link>
           <Link href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</Link>
           <Link href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</Link>
-          <DarkModeToggle />
           <SignedIn>
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
@@ -63,7 +61,6 @@ export default function HeaderSection() {
           <Link href="/pricing" className="text-blue-700 font-medium py-2 border-b border-gray-100">Pricing</Link>
           <Link href="/study-tools" className="text-blue-700 font-medium py-2 border-b border-gray-100">Study Tools</Link>
           <Link href="/profile" className="text-blue-700 font-medium py-2">Profile</Link>
-          <div className="py-2"><DarkModeToggle /></div>
         </div>
       )}
     </header>
