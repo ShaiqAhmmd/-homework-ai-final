@@ -22,6 +22,7 @@ export default function HeaderSection() {
           <Link href="/chat" className="font-semibold hover:underline underline-offset-4 transition">Chat</Link>
           <Link href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</Link>
           <Link href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</Link>
+          <Link href="/pdf-analyzer" className="font-semibold hover:underline underline-offset-4 transition"> PDF Analyzer</Link>
           <Link href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</Link>
           <SignedIn>
             <UserButton afterSignOutUrl="/" />
@@ -61,9 +62,7 @@ export default function HeaderSection() {
           <Link href="/pricing" className="text-blue-700 font-medium py-2 border-b border-gray-100">Pricing</Link>
           <Link href="/study-tools" className="text-blue-700 font-medium py-2 border-b border-gray-100">Study Tools</Link>
           <Link href="/profile" className="text-blue-700 font-medium py-2">Profile</Link>
-          <Link href="/pdf-analyzer" className="font-semibold hover:underline underline-offset-4 transition">
-  PDF Analyzer
-</Link>
+          <Link href="/pdf-analyzer" className="font-semibold hover:underline underline-offset-4 transition">PDF Analyzer</Link>
         </div>
       )}
     </header>
