@@ -21,3 +21,4 @@ app.get('/', (req, res) => res.send('PDF API is running!'))
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log('PDF API running on port', PORT))
+app.get('/health', (req, res) => res.send('OK'))
