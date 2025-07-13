@@ -1,18 +1,5 @@
 'use client'
-export const dynamic = "force-dynamic";
 import { useState } from 'react'
-
-// No top-level import for pdfjs-dist! Only import in browser.
-let pdfjsLib: any
-let pdfjsWorker: any
-let GlobalWorkerOptions: any
-
-if (typeof window !== 'undefined') {
-  pdfjsLib = require('pdfjs-dist/build/pdf')
-  GlobalWorkerOptions = pdfjsLib.GlobalWorkerOptions
-  pdfjsWorker = require('pdfjs-dist/build/pdf.worker?worker')
-  GlobalWorkerOptions.workerSrc = pdfjsWorker.default // <-- THIS IS THE FIX!
-}
 
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -20,11 +7,13 @@ export default function PDFAnalyzerPage() {
   const [loading, setLoading] = useState(false)
   const [ai, setAI] = useState<any>(null)
 
-  // 1. Extract text from PDF in browser
   async function extractTextFromPDF(file: File) {
     setLoading(true)
+    const pdfjsLib = await import('pdfjs-dist/build/pdf')
+    const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker?worker')
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default
+
     const arrayBuffer = await file.arrayBuffer()
-    // @ts-ignore
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
     let fullText = ''
     for (let i = 1; i <= pdf.numPages; i++) {
@@ -37,13 +26,11 @@ export default function PDFAnalyzerPage() {
     return fullText
   }
 
-  // 2. Handle file upload
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setFile(file)
     const extracted = await extractTextFromPDF(file)
-    // 3. Send to backend for AI analysis
     const res = await fetch('/api/pdf-analyzer/analyze', {
       method: 'POST',
       body: JSON.stringify({ text: extracted }),
