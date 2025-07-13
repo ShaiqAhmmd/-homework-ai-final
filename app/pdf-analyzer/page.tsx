@@ -1,10 +1,15 @@
 'use client'
+export const dynamic = "force-dynamic";
 import { useState } from 'react'
-import * as pdfjsLib from 'pdfjs-dist/build/pdf'
-import { GlobalWorkerOptions } from 'pdfjs-dist/build/pdf'
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?worker'
 
-if (typeof window !== 'undefined' && 'Worker' in window) {
+let pdfjsLib: any
+let pdfjsWorker: any
+let GlobalWorkerOptions: any
+
+if (typeof window !== 'undefined') {
+  pdfjsLib = require('pdfjs-dist/build/pdf')
+  GlobalWorkerOptions = pdfjsLib.GlobalWorkerOptions
+  pdfjsWorker = require('pdfjs-dist/build/pdf.worker?worker')
   GlobalWorkerOptions.workerSrc = pdfjsWorker
 }
 
