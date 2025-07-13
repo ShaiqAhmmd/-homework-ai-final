@@ -7,11 +7,14 @@ export default function PDFAnalyzerPage() {
   const [loading, setLoading] = useState(false)
   const [ai, setAI] = useState<any>(null)
 
+  // 1. Extract text from PDF in browser
   async function extractTextFromPDF(file: File) {
     setLoading(true)
+    // Dynamically import pdfjs and worker ONLY in the browser
     const pdfjsLib = await import('pdfjs-dist/build/pdf')
     const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker?worker')
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default
+    // Always use .default for workerSrc (for Vercel/Next.js)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default || pdfjsWorker
 
     const arrayBuffer = await file.arrayBuffer()
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
@@ -26,11 +29,13 @@ export default function PDFAnalyzerPage() {
     return fullText
   }
 
+  // 2. Handle file upload
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setFile(file)
     const extracted = await extractTextFromPDF(file)
+    // 3. Send to backend for AI analysis
     const res = await fetch('/api/pdf-analyzer/analyze', {
       method: 'POST',
       body: JSON.stringify({ text: extracted }),
