@@ -1,116 +1,87 @@
 'use client'
 import { useState } from 'react'
+import * as pdfjsLib from 'pdfjs-dist/build/pdf'
+import 'pdfjs-dist/build/pdf.worker.entry'
 
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
   const [text, setText] = useState('')
-  const [summary, setSummary] = useState('')
-  const [questions, setQuestions] = useState<string[]>([])
-  const [keywords, setKeywords] = useState<string[]>([])
-  const [subject, setSubject] = useState('')
-  const [search, setSearch] = useState('')
-  const [aiAnswer, setAiAnswer] = useState('')
-  const [page, setPage] = useState(1)
-  const [numPages, setNumPages] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [ai, setAI] = useState<any>(null)
 
-  // 1. Upload PDF and extract text
+  // 1. Extract text from PDF in browser
+  async function extractTextFromPDF(file: File) {
+    setLoading(true)
+    const arrayBuffer = await file.arrayBuffer()
+    // @ts-ignore
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+    let fullText = ''
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i)
+      const content = await page.getTextContent()
+      fullText += content.items.map((item: any) => item.str).join(' ') + '\n'
+    }
+    setText(fullText)
+    setLoading(false)
+    return fullText
+  }
+
+  // 2. Handle file upload
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setFile(file)
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await fetch('/api/pdf-analyzer/upload', { method: 'POST', body: formData })
-    const data = await res.json()
-    setText(data.text)
-    setNumPages(data.numpages)
-    // 2. Analyze text
-    const res2 = await fetch('/api/pdf-analyzer/analyze', {
+    const extracted = await extractTextFromPDF(file)
+    // 3. Send to backend for AI analysis
+    const res = await fetch('/api/pdf-analyzer/analyze', {
       method: 'POST',
-      body: JSON.stringify({ text: data.text }),
+      body: JSON.stringify({ text: extracted }),
       headers: { 'Content-Type': 'application/json' }
     })
-    const ai = await res2.json()
-    setSummary(ai.summary)
-    setQuestions(ai.questions)
-    setKeywords(ai.keywords)
-    setSubject(ai.subject)
-  }
-
-  // 3. Smart search
-  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value)
-  }
-
-  // 4. AI Q&A
-  async function handleAsk(question: string) {
-    const res = await fetch('/api/pdf-analyzer/ask', {
-      method: 'POST',
-      body: JSON.stringify({ text, question }),
-      headers: { 'Content-Type': 'application/json' }
-    })
-    const data = await res.json()
-    setAiAnswer(data.answer)
+    setAI(await res.json())
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-6">PDF Analyzer</h1>
-      <input type="file" accept="application/pdf" onChange={handleUpload} className="mb-4" />
-
+    <div className="max-w-3xl mx-auto py-12 px-4">
+      <h1 className="text-2xl font-bold mb-6">PDF Analyzer</h1>
+      <input
+        type="file"
+        accept="application/pdf"
+        onChange={handleUpload}
+        className="mb-4"
+      />
+      {loading && <div className="mb-4 text-blue-600">Extracting text from PDF...</div>}
       {text && (
+        <div className="mb-6">
+          <h2 className="font-semibold mb-2">Extracted Text (first 500 chars):</h2>
+          <div className="bg-gray-50 p-2 rounded text-xs max-h-40 overflow-y-auto">
+            {text.slice(0, 500)}{text.length > 500 && '...'}
+          </div>
+        </div>
+      )}
+      {ai && (
         <>
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Summary</h2>
-            <p className="bg-gray-50 p-3 rounded">{summary}</p>
+            <h2 className="font-semibold mb-2">Summary</h2>
+            <div className="bg-gray-50 p-2 rounded">{ai.summary}</div>
           </div>
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Detected Questions</h2>
+            <h2 className="font-semibold mb-2">Questions</h2>
             <ul className="list-disc ml-6">
-              {questions.map((q, i) => <li key={i}>{q}</li>)}
+              {ai.questions?.map((q: string, i: number) => <li key={i}>{q}</li>)}
             </ul>
           </div>
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Keywords</h2>
+            <h2 className="font-semibold mb-2">Keywords</h2>
             <div className="flex flex-wrap gap-2">
-              {keywords.map((k, i) => (
+              {ai.keywords?.map((k: string, i: number) => (
                 <span key={i} className="px-2 py-1 bg-blue-100 rounded text-blue-800 text-sm">{k}</span>
               ))}
             </div>
           </div>
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Subject</h2>
-            <span className="px-3 py-1 bg-green-100 rounded text-green-800">{subject}</span>
-          </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">Smart Search</h2>
-            <input
-              type="text"
-              placeholder="Search in PDF..."
-              value={search}
-              onChange={handleSearch}
-              className="border px-2 py-1 rounded w-full"
-            />
-            {search && (
-              <div className="mt-2 text-sm">
-                <b>Results:</b> {text.toLowerCase().includes(search.toLowerCase()) ? 'Found!' : 'Not found.'}
-              </div>
-            )}
-          </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-2">AI Q&A Assistant</h2>
-            <form
-              onSubmit={e => {
-                e.preventDefault()
-                // @ts-ignore
-                handleAsk(e.target.elements.q.value)
-              }}
-              className="flex gap-2"
-            >
-              <input name="q" type="text" placeholder="Ask about this PDF..." className="border px-2 py-1 rounded w-full" />
-              <button type="submit" className="bg-blue-600 text-white px-4 py-1 rounded">Ask</button>
-            </form>
-            {aiAnswer && <div className="mt-2 bg-gray-50 p-3 rounded">{aiAnswer}</div>}
+            <h2 className="font-semibold mb-2">Subject</h2>
+            <span className="px-3 py-1 bg-green-100 rounded text-green-800">{ai.subject}</span>
           </div>
         </>
       )}
