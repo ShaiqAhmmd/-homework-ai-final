@@ -31,3 +31,8 @@ export async function getAIKeywords(text: string) {
 export async function getAISubject(text: string) {
   return callTogetherAI(`What school subject does this PDF belong to? (e.g. Physics, English, History, etc.)\n\n${text}`)
 }
+// ...other code...
+
+export async function getAIAnswer(text: string, question: string) {
+  return callTogetherAI(`Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`)
+}
