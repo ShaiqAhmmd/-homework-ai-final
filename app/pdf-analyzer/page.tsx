@@ -1,7 +1,12 @@
 'use client'
 import { useState } from 'react'
 import * as pdfjsLib from 'pdfjs-dist/build/pdf'
-import 'pdfjs-dist/build/pdf.worker.entry'
+import { GlobalWorkerOptions } from 'pdfjs-dist/build/pdf'
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker?worker'
+
+if (typeof window !== 'undefined' && 'Worker' in window) {
+  GlobalWorkerOptions.workerSrc = pdfjsWorker
+}
 
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
