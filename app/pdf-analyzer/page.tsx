@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { PDFDocument } from 'pdf-lib'
 
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -8,41 +7,30 @@ export default function PDFAnalyzerPage() {
   const [loading, setLoading] = useState(false)
   const [ai, setAI] = useState<any>(null)
 
-  // 1. Extract text from PDF in browser using pdf-lib
-  async function extractTextFromPDF(file: File) {
-    setLoading(true)
-    const arrayBuffer = await file.arrayBuffer()
-    const pdfDoc = await PDFDocument.load(arrayBuffer)
-    let fullText = ''
-    const pages = pdfDoc.getPages()
-    for (const page of pages) {
-      // pdf-lib doesn't have a built-in getTextContent, so we use the "text items" hack:
-      // This is a workaround for now, pdf-lib is limited for text extraction.
-      // For most PDFs, this will get the text, but for some, it may be empty.
-      // If you need 100% reliable extraction, you need a backend Node parser.
-      // But this works for most student notes, assignments, etc.
-      // @ts-ignore
-     fullText += '[Text extraction not supported for this PDF page]\n'
-      fullText += '\n'
-    }
-    setText(fullText)
-    setLoading(false)
-    return fullText
-  }
-
-  // 2. Handle file upload
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setFile(file)
-    const extracted = await extractTextFromPDF(file)
-    // 3. Send to backend for AI analysis
-    const res = await fetch('/api/pdf-analyzer/analyze', {
+    setLoading(true)
+
+    // 1. Upload to your Railway backend
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch('https://homework-ai-final-production.up.railway.app/extract', {
       method: 'POST',
-      body: JSON.stringify({ text: extracted }),
+      body: formData
+    })
+    const data = await res.json()
+    setText(data.text)
+    setLoading(false)
+
+    // 2. Send extracted text to your AI backend as before
+    const res2 = await fetch('/api/pdf-analyzer/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ text: data.text }),
       headers: { 'Content-Type': 'application/json' }
     })
-    setAI(await res.json())
+    setAI(await res2.json())
   }
 
   return (
