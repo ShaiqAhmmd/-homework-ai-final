@@ -10,11 +10,9 @@ export default function PDFAnalyzerPage() {
   // 1. Extract text from PDF in browser
   async function extractTextFromPDF(file: File) {
     setLoading(true)
-    // Dynamically import pdfjs and worker ONLY in the browser
     const pdfjsLib = await import('pdfjs-dist/build/pdf')
-    const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker?worker')
-    // Always use .default for workerSrc (for Vercel/Next.js)
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default || pdfjsWorker
+    // ✅ Use CDN for workerSrc (this always works on Vercel/Next.js)
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
 
     const arrayBuffer = await file.arrayBuffer()
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
