@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pdfParse from 'pdf-parse'
 
 export const runtime = 'nodejs'
 
@@ -9,12 +8,9 @@ export async function POST(req: NextRequest) {
 
   if (!file) return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const data = await pdfParse(buffer)
+  // DO NOT use fs.readFileSync or open here!
+  // Only process the uploaded file from the user
 
-  return NextResponse.json({
-    text: data.text,
-    numpages: data.numpages,
-    info: data.info,
-  })
+  // You can send the file to the client for parsing, or just return success
+  return NextResponse.json({ ok: true })
 }
