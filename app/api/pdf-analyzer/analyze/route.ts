@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   // Parse questions and keywords into arrays
   const questions = questionsRaw.split('\n').filter((q: { trim: () => { (): any; new(): any; length: number } }) => q.trim().length > 0)
   const keywords = keywordsRaw.split(/,|\n/).map((k: string) => k.trim()).filter(Boolean)
-
+console.log({ summary, questions, keywords, subject })
   return NextResponse.json({
     summary,
     questions,

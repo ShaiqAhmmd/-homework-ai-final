@@ -1,4 +1,4 @@
-const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY! // Set this in your .env.local
+const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY!
 
 async function callTogetherAI(prompt: string) {
   const res = await fetch('https://api.together.xyz/v1/completions', {
@@ -20,21 +20,14 @@ async function callTogetherAI(prompt: string) {
 }
 
 export async function getAISummary(text: string) {
-  return callTogetherAI(`Summarize this PDF for a student in 3-5 sentences:\n\n${text}`)
+  return callTogetherAI(`Summarize this PDF for a student:\n\n${text}`)
 }
-
 export async function getAIQuestions(text: string) {
   return callTogetherAI(`Extract all questions (MCQ, short, long) from this PDF text. List each question on a new line:\n\n${text}`)
 }
-
 export async function getAIKeywords(text: string) {
   return callTogetherAI(`List the most important keywords, formulas, and definitions from this PDF text. Separate by commas:\n\n${text}`)
 }
-
 export async function getAISubject(text: string) {
   return callTogetherAI(`What school subject does this PDF belong to? (e.g. Physics, English, History, etc.)\n\n${text}`)
-}
-
-export async function getAIAnswer(text: string, question: string) {
-  return callTogetherAI(`Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`)
 }
