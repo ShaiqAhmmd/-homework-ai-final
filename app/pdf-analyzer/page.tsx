@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useState } from 'react'
 
+// No top-level import for pdfjs-dist! Only import in browser.
 let pdfjsLib: any
 let pdfjsWorker: any
 let GlobalWorkerOptions: any
@@ -10,7 +11,7 @@ if (typeof window !== 'undefined') {
   pdfjsLib = require('pdfjs-dist/build/pdf')
   GlobalWorkerOptions = pdfjsLib.GlobalWorkerOptions
   pdfjsWorker = require('pdfjs-dist/build/pdf.worker?worker')
-  GlobalWorkerOptions.workerSrc = pdfjsWorker
+  GlobalWorkerOptions.workerSrc = pdfjsWorker.default // <-- THIS IS THE FIX!
 }
 
 export default function PDFAnalyzerPage() {
