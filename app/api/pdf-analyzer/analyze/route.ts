@@ -12,14 +12,42 @@ export async function POST(req: NextRequest) {
     limitedText = text.slice(0, 8000)
   }
 
-  const summary = await getAISummary(limitedText)
+  const summaryRaw = await getAISummary(limitedText)
   const questionsRaw = await getAIQuestions(limitedText)
   const keywordsRaw = await getAIKeywords(limitedText)
-  const subject = await getAISubject(limitedText)
+  const subjectRaw = await getAISubject(limitedText)
 
-  // Parse questions and keywords into arrays
-  const questions = questionsRaw.split('\n').filter((q: { trim: () => { (): any; new(): any; length: number }; toLowerCase: () => string | string[] }) => q.trim().length > 0 && !q.toLowerCase().includes('no questions found'))
-  const keywords = keywordsRaw.split(/,|\n/).map((k: string) => k.trim()).filter(Boolean)
+  // Post-process AI output for clean results
+  const summary = summaryRaw
+    .replace(/^Summary:/i, '')
+    .replace(/^\s*=/gm, '')
+    .replace(/\n{2,}/g, '\n')
+    .trim()
+
+  const questions = questionsRaw
+    .replace(/^Questions:/i, '')
+    .split('\n')
+    .map((q: string) => q.trim())
+    .filter((q: string) =>
+      q &&
+      !q.toLowerCase().includes('please') &&
+      !q.startsWith('```') &&
+      !q.toLowerCase().includes('extract') &&
+      !q.toLowerCase().includes('no questions found')
+    )
+
+  const keywords = keywordsRaw
+    .replace(/^Keywords:/i, '')
+    .split(/,|\n/)
+    .map((k: string) => k.trim())
+    .filter(Boolean)
+    .filter((k: string | any[]) => k.length < 40) // filter out long sentences
+
+  const subject = subjectRaw
+    .replace(/^Subject:/i, '')
+    .replace(/[^a-zA-Z ]/g, '')
+    .trim()
+    .split(' ')[0] // just the first word
 
   return NextResponse.json({
     summary,

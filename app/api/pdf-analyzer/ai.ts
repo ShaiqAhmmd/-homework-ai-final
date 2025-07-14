@@ -30,29 +30,53 @@ async function callTogetherAI(prompt: string) {
 
 export async function getAISummary(text: string) {
   return callTogetherAI(
-    `Summarize the following text for a high school student in 3-5 simple sentences:\n\n${text}\n\nSummary:`
+    `Summarize the following text for a high school student in 3-5 simple sentences.
+Do NOT include any explanation, code, or extra text.
+Text:
+${text}
+Summary:`
   )
 }
 
 export async function getAIQuestions(text: string) {
   return callTogetherAI(
-    `From the following text, extract up to 10 actual questions (MCQ, short, or long answer). Only list the questions, one per line. Do not include any explanation, code, or instructions. If there are no questions, just write "No questions found."\n\n${text}\n\nQuestions:`
+    `From the following text, extract up to 10 actual questions (MCQ, short, or long answer).
+Only list the questions, one per line, and do NOT include any explanation, code, or instructions.
+If there are no questions, just write "No questions found."
+Text:
+${text}
+Questions:`
   )
 }
 
 export async function getAIKeywords(text: string) {
   return callTogetherAI(
-    `List the 10 most important keywords, formulas, or definitions from the following text. Separate each keyword with a comma. Do not include any explanation or extra text.\n\n${text}\n\nKeywords:`
+    `List the 10 most important keywords, formulas, or definitions from the following text.
+Separate each keyword with a comma.
+Do NOT include any explanation, extra text, or sentences.
+Text:
+${text}
+Keywords:`
   )
 }
 
 export async function getAISubject(text: string) {
   return callTogetherAI(
-    `What is the main school subject of this text? Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc).\n\n${text}\n\nSubject:`
+    `What is the main school subject of this text?
+Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc).
+Do NOT include any explanation or extra text.
+Text:
+${text}
+Subject:`
   )
 }
+
 export async function getAIAnswer(text: string, question: string) {
   return callTogetherAI(
-    `Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`
+    `Based on this PDF content:
+${text}
+
+Answer this question for a student:
+${question}`
   )
 }
