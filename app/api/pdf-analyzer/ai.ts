@@ -61,3 +61,12 @@ ${text}
 Flashcards:`
   )
 }
+export async function getAIAnswer(text: string, question: string) {
+  return callTogetherAI(
+    `Based on this PDF content:
+${text}
+
+Answer this question for a student:
+${question}`
+  )
+}
