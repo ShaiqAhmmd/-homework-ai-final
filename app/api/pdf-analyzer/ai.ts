@@ -51,3 +51,8 @@ export async function getAISubject(text: string) {
     `What is the main school subject of this text? Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc).\n\n${text}\n\nSubject:`
   )
 }
+export async function getAIAnswer(text: string, question: string) {
+  return callTogetherAI(
+    `Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`
+  )
+}
