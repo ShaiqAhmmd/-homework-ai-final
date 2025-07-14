@@ -16,13 +16,14 @@ export async function POST(req: NextRequest) {
   const questionsRaw = await getAIQuestions(limitedText)
   const flashcardsRaw = await getAIFlashcards(limitedText)
 
-  // Post-process AI output for clean results
+  // Clean summary
   const summary = summaryRaw
     .replace(/^Summary:/i, '')
     .replace(/^\s*=/gm, '')
     .replace(/\n{2,}/g, '\n')
     .trim()
 
+  // Clean questions
   const questions = questionsRaw
     .replace(/^Questions:/i, '')
     .split('\n')
@@ -32,7 +33,8 @@ export async function POST(req: NextRequest) {
       !q.toLowerCase().includes('please') &&
       !q.startsWith('```') &&
       !q.toLowerCase().includes('extract') &&
-      !q.toLowerCase().includes('no questions found')
+      !q.toLowerCase().includes('no questions found') &&
+      q.length > 10
     )
 
   // Parse flashcards

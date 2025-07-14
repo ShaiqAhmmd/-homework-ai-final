@@ -28,45 +28,28 @@ async function callTogetherAI(prompt: string) {
   }
 }
 
+// --- ULTRA-DIRECT PROMPTS ---
+
 export async function getAISummary(text: string) {
   return callTogetherAI(
-    `Summarize the following text for a high school student in 3-5 simple sentences.
-Do NOT include any explanation, code, or extra text.
-Text:
-${text}
-Summary:`
+    `Summarize this in 3-5 simple sentences:\n${text}\nSummary:`
   )
 }
 
 export async function getAIQuestions(text: string) {
   return callTogetherAI(
-    `From the following text, extract up to 10 actual questions (MCQ, short, or long answer).
-Only list the questions, one per line, and do NOT include any explanation, code, or instructions.
-If there are no questions, just write "No questions found."
-Text:
-${text}
-Questions:`
+    `List 5-10 real questions found in this text. Only list the questions, one per line. No explanation.\n${text}\nQuestions:`
   )
 }
 
 export async function getAIFlashcards(text: string) {
   return callTogetherAI(
-    `From the following text, generate up to 10 flashcards.
-Each flashcard should be a Q&A pair in this format:
-Q: [question]
-A: [answer]
-Do NOT include any explanation or extra text.
-Text:
-${text}
-Flashcards:`
+    `Make 5-10 flashcards from this text. Each flashcard must be in this format:\nQ: [question]\nA: [answer]\nNo explanation. Only output flashcards.\n${text}\nFlashcards:`
   )
 }
+
 export async function getAIAnswer(text: string, question: string) {
   return callTogetherAI(
-    `Based on this PDF content:
-${text}
-
-Answer this question for a student:
-${question}`
+    `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
   )
 }
