@@ -75,6 +75,11 @@ export default function PDFAnalyzerPage() {
             <h2 className="font-semibold mb-2">Subject</h2>
             <span className="px-3 py-1 bg-green-100 rounded text-green-800">{ai.subject}</span>
           </div>
+          {ai?.warning && (
+  <div className="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded font-semibold">
+    {ai.warning}
+  </div>
+)}
         </>
       )}
     </div>
