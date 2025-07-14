@@ -28,43 +28,26 @@ async function callTogetherAI(prompt: string) {
   }
 }
 
-// Prompt-engineered helpers:
-
 export async function getAISummary(text: string) {
   return callTogetherAI(
-    `Summarize this PDF for a student in 3-5 sentences. 
-    Do NOT include any extra explanation or comments. 
-    PDF text:\n\n${text}`
+    `Summarize the following text for a high school student in 3-5 simple sentences:\n\n${text}\n\nSummary:`
   )
 }
 
 export async function getAIQuestions(text: string) {
   return callTogetherAI(
-    `Extract up to 10 questions (MCQ, short, long) from this PDF text. 
-    List ONLY the questions, one per line, with no extra explanation or comments. 
-    If there are no questions, just write "No questions found." 
-    PDF text:\n\n${text}`
+    `From the following text, extract up to 10 actual questions (MCQ, short, or long answer). Only list the questions, one per line. Do not include any explanation, code, or instructions. If there are no questions, just write "No questions found."\n\n${text}\n\nQuestions:`
   )
 }
 
 export async function getAIKeywords(text: string) {
   return callTogetherAI(
-    `List the 10 most important keywords, formulas, and definitions from this PDF text. 
-    Separate each keyword with a comma, and do NOT include any extra explanation. 
-    PDF text:\n\n${text}`
+    `List the 10 most important keywords, formulas, or definitions from the following text. Separate each keyword with a comma. Do not include any explanation or extra text.\n\n${text}\n\nKeywords:`
   )
 }
 
 export async function getAISubject(text: string) {
   return callTogetherAI(
-    `What is the main school subject of this PDF? 
-    Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc). 
-    PDF text:\n\n${text}`
-  )
-}
-
-export async function getAIAnswer(text: string, question: string) {
-  return callTogetherAI(
-    `Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`
+    `What is the main school subject of this text? Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc).\n\n${text}\n\nSubject:`
   )
 }
