@@ -3,6 +3,8 @@ import { getAISummary, getAIQuestions, getAIFlashcards } from '../ai'
 
 export async function POST(req: NextRequest) {
   const { text } = await req.json()
+
+  // Limit to first 8000 characters (or less)
   let warning = ''
   let limitedText = text
   if (text.length > 8000) {
@@ -14,7 +16,13 @@ export async function POST(req: NextRequest) {
   const questionsRaw = await getAIQuestions(limitedText)
   const flashcardsRaw = await getAIFlashcards(limitedText)
 
-  // Parse questions
+  // Post-process AI output for clean results
+  const summary = summaryRaw
+    .replace(/^Summary:/i, '')
+    .replace(/^\s*=/gm, '')
+    .replace(/\n{2,}/g, '\n')
+    .trim()
+
   const questions = questionsRaw
     .replace(/^Questions:/i, '')
     .split('\n')
@@ -38,8 +46,6 @@ export async function POST(req: NextRequest) {
       })
     }
   })
-
-  const summary = summaryRaw.replace(/^Summary:/i, '').trim()
 
   return NextResponse.json({
     summary,

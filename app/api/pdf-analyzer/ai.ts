@@ -51,23 +51,13 @@ Questions:`
 
 export async function getAIFlashcards(text: string) {
   return callTogetherAI(
-    `From the following text, generate up to 10 flashcards. 
-Each flashcard should be a Q&A pair in this format: 
+    `From the following text, generate up to 10 flashcards.
+Each flashcard should be a Q&A pair in this format:
 Q: [question]
 A: [answer]
 Do NOT include any explanation or extra text.
 Text:
 ${text}
 Flashcards:`
-  )
-}
-
-export async function getAIAnswer(text: string, question: string) {
-  return callTogetherAI(
-    `Based on this PDF content:
-${text}
-
-Answer this question for a student:
-${question}`
   )
 }
