@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Download, FileText, Upload } from 'lucide-react' // optional: for icons
+import { FileText, Upload, Download } from 'lucide-react'
 
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -8,7 +8,6 @@ export default function PDFAnalyzerPage() {
   const [loading, setLoading] = useState(false)
   const [ai, setAI] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-  const [flashcards, setFlashcards] = useState<{ q: string, a: string }[]>([])
 
   // Demo/sample PDFs (add your own or use public links)
   const samplePDFs = [
@@ -31,7 +30,6 @@ export default function PDFAnalyzerPage() {
     setError(null)
     setAI(null)
     setText('')
-    setFlashcards([])
 
     // 1. Upload to your Railway backend
     const formData = new FormData()
@@ -67,7 +65,6 @@ export default function PDFAnalyzerPage() {
     setError(null)
     setAI(null)
     setText('')
-    setFlashcards([])
     // Download the PDF and send to backend
     const res = await fetch(url)
     const blob = await res.blob()
@@ -89,8 +86,8 @@ export default function PDFAnalyzerPage() {
 
   // 4. Export to CSV (for flashcards)
   function exportFlashcardsCSV() {
-    if (!flashcards.length) return
-    const csv = "Question,Answer\n" + flashcards.map(f => `"${f.q.replace(/"/g, '""')}","${f.a.replace(/"/g, '""')}"`).join('\n')
+    if (!ai?.flashcards?.length) return
+    const csv = "Question,Answer\n" + ai.flashcards.map((f: { q: string, a: string }) => `"${f.q.replace(/"/g, '""')}","${f.a.replace(/"/g, '""')}"`).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -100,35 +97,15 @@ export default function PDFAnalyzerPage() {
     URL.revokeObjectURL(url)
   }
 
-  // 5. Generate flashcards from PDF topic/content
-  async function generateFlashcards() {
-    if (!text) return
-    setLoading(true)
-    setFlashcards([])
-    try {
-      const res = await fetch('/api/study-quiz-generator', {
-        method: 'POST',
-        body: JSON.stringify({
-          text,
-          type: 'flashcards',
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-      const data = await res.json()
-      setFlashcards(data.flashcards || [])
-    } catch (e) {
-      setError('Failed to generate flashcards.')
-    }
-    setLoading(false)
-  }
-
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
       {/* Description */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-extrabold mb-2">📄 PDF Analyzer</h1>
+        <h1 className="text-3xl font-extrabold mb-2 flex items-center justify-center gap-2">
+          <FileText size={32} /> PDF Analyzer
+        </h1>
         <p className="text-gray-600 mb-4">
-          Instantly extract summaries, questions, and generate flashcards from any textbook, assignment, or notes PDF. 
+          Instantly extract summaries, questions, and generate flashcards from any textbook, assignment, or notes PDF.<br />
           <span className="block text-blue-600 font-semibold">Save hours of study time with AI-powered insights!</span>
         </p>
         <div className="flex flex-wrap gap-2 justify-center mb-2">
@@ -155,7 +132,7 @@ export default function PDFAnalyzerPage() {
           <button
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700 transition"
             onClick={exportFlashcardsCSV}
-            disabled={!flashcards.length}
+            disabled={!ai?.flashcards?.length}
           >
             <Download size={18} /> Export Flashcards (CSV)
           </button>
@@ -209,17 +186,10 @@ export default function PDFAnalyzerPage() {
           <div className="mb-6">
             <h2 className="font-semibold mb-2 flex items-center gap-2">
               Flashcards
-              <button
-                className="ml-2 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
-                onClick={generateFlashcards}
-                disabled={loading || !text}
-              >
-                Generate Flashcards
-              </button>
             </h2>
-            {flashcards.length ? (
+            {ai.flashcards?.length ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {flashcards.map((f, i) => (
+                {ai.flashcards.map((f: { q: string, a: string }, i: number) => (
                   <div key={i} className="bg-white border rounded p-3 shadow-sm">
                     <div className="font-semibold text-blue-700 mb-1">Q: {f.q}</div>
                     <div className="text-gray-700">A: {f.a}</div>

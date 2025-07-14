@@ -49,25 +49,16 @@ Questions:`
   )
 }
 
-export async function getAIKeywords(text: string) {
+export async function getAIFlashcards(text: string) {
   return callTogetherAI(
-    `List the 10 most important keywords, formulas, or definitions from the following text.
-Separate each keyword with a comma.
-Do NOT include any explanation, extra text, or sentences.
-Text:
-${text}
-Keywords:`
-  )
-}
-
-export async function getAISubject(text: string) {
-  return callTogetherAI(
-    `What is the main school subject of this text?
-Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc).
+    `From the following text, generate up to 10 flashcards. 
+Each flashcard should be a Q&A pair in this format: 
+Q: [question]
+A: [answer]
 Do NOT include any explanation or extra text.
 Text:
 ${text}
-Subject:`
+Flashcards:`
   )
 }
 
