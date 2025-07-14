@@ -28,20 +28,43 @@ async function callTogetherAI(prompt: string) {
   }
 }
 
+// Prompt-engineered helpers:
+
 export async function getAISummary(text: string) {
-  return callTogetherAI(`Summarize this PDF for a student in 3-5 sentences:\n\n${text}`)
+  return callTogetherAI(
+    `Summarize this PDF for a student in 3-5 sentences. 
+    Do NOT include any extra explanation or comments. 
+    PDF text:\n\n${text}`
+  )
 }
+
 export async function getAIQuestions(text: string) {
-  return callTogetherAI(`Extract all questions (MCQ, short, long) from this PDF text. List each question on a new line:\n\n${text}`)
+  return callTogetherAI(
+    `Extract up to 10 questions (MCQ, short, long) from this PDF text. 
+    List ONLY the questions, one per line, with no extra explanation or comments. 
+    If there are no questions, just write "No questions found." 
+    PDF text:\n\n${text}`
+  )
 }
+
 export async function getAIKeywords(text: string) {
-  return callTogetherAI(`List the most important keywords, formulas, and definitions from this PDF text. Separate by commas:\n\n${text}`)
+  return callTogetherAI(
+    `List the 10 most important keywords, formulas, and definitions from this PDF text. 
+    Separate each keyword with a comma, and do NOT include any extra explanation. 
+    PDF text:\n\n${text}`
+  )
 }
+
 export async function getAISubject(text: string) {
-  return callTogetherAI(`What school subject does this PDF belong to? (e.g. Physics, English, History, etc.)\n\n${text}`)
+  return callTogetherAI(
+    `What is the main school subject of this PDF? 
+    Respond with only one word (e.g. Physics, English, History, Chemistry, Math, etc). 
+    PDF text:\n\n${text}`
+  )
 }
-// ...other code...
 
 export async function getAIAnswer(text: string, question: string) {
-  return callTogetherAI(`Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`)
+  return callTogetherAI(
+    `Based on this PDF content:\n${text}\n\nAnswer this question for a student:\n${question}`
+  )
 }

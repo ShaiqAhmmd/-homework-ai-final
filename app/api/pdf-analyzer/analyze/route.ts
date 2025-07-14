@@ -18,17 +18,14 @@ export async function POST(req: NextRequest) {
   const subject = await getAISubject(limitedText)
 
   // Parse questions and keywords into arrays
-  const questions = questionsRaw.split('\n').filter((q: { trim: () => { (): any; new(): any; length: number } }) => q.trim().length > 0)
+  const questions = questionsRaw.split('\n').filter((q: { trim: () => { (): any; new(): any; length: number }; toLowerCase: () => string | string[] }) => q.trim().length > 0 && !q.toLowerCase().includes('no questions found'))
   const keywords = keywordsRaw.split(/,|\n/).map((k: string) => k.trim()).filter(Boolean)
-
-  // Optional: log for debugging
-  console.log({ summary, questions, keywords, subject, warning })
 
   return NextResponse.json({
     summary,
     questions,
     keywords,
     subject,
-    warning, // <-- include the warning in the response
+    warning,
   })
 }
