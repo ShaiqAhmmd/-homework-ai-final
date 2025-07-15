@@ -1,11 +1,9 @@
-import { ClerkProvider, useUser } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 import FooterSection from './components/FooterSection';
 import HeaderSection from './components/HeaderSection';
-import AuthButtons from './components/AuthButtons';
-import Link from 'next/link';
+import ReferralTracker from './components/ReferralTracker';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,31 +13,6 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { user, isSignedIn } = useUser();
-
-  useEffect(() => {
-    const trackReferral = async () => {
-      if (!user || !isSignedIn) return;
-
-      try {
-        await fetch('/api/user/track-referral', {
-          method: 'POST',
-          body: JSON.stringify({
-            clerkId: user.id,
-            email: user?.primaryEmailAddress?.emailAddress,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      } catch (err) {
-        console.error('Failed to track referral:', err);
-      }
-    };
-
-    trackReferral();
-  }, [user, isSignedIn]);
-
   return (
     <ClerkProvider>
       <html lang="en">
@@ -51,9 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             minHeight: '100vh',
           }}
         >
+          <ReferralTracker />
           <main className="max-w-7xl mx-auto px-4 py-10 mt-20">{children}</main>
           <FooterSection />
-          <HeaderSection />
+          <HeaderSection />  {/* ✅ AuthButtons inside here */}
         </body>
       </html>
     </ClerkProvider>
