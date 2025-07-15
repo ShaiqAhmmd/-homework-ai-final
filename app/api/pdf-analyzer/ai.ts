@@ -79,6 +79,37 @@ Flashcards:`
   );
 }
 
+export async function getAIMCQs(text: string) {
+  return callTogetherAI(
+    `You are an AI teacher creating a multiple-choice quiz. 
+
+Generate 5 unique MCQs from the following text. 
+
+Each question must have:
+• 1 question
+• 4 options labeled A, B, C, D
+• The correct answer label (A/B/C/D)
+• A very short explanation
+
+Format:
+Q: [question]
+A. Option A
+B. Option B
+C. Option C
+D. Option D
+Answer: [A/B/C/D]
+Explanation: [short reason]
+
+Only return the MCQs and nothing else.
+
+Text:
+${text}
+
+Quiz:
+Q:`
+  );
+}
+
 export async function getAIAnswer(text: string, question: string) {
   return callTogetherAI(
     `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
