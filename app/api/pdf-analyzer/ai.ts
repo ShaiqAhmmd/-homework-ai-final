@@ -32,20 +32,51 @@ async function callTogetherAI(prompt: string) {
 
 export async function getAISummary(text: string) {
   return callTogetherAI(
-    `Summarize this in 3-5 simple sentences:\n${text}\nSummary:`
-  )
+    `You are an AI study assistant for high school students.
+
+Summarize the following content clearly in 5 bullet points.
+Each point should explain a unique concept in simple language.
+
+Text:
+${text}
+
+Bullet Summary:
+- `
+  );
 }
 
 export async function getAIQuestions(text: string) {
   return callTogetherAI(
-    `List 5-10 real questions found in this text. Only list the questions, one per line. No explanation.\n${text}\nQuestions:`
-  )
+    `You are an AI teacher. Based on the following textbook content, write 8–12 unique study questions.
+
+Avoid simple "What is..." questions. Include "how", "why", and "explain" style questions too.
+
+Only return one question per line, no numbers or explanations.
+
+Text:
+${text}
+
+Student Questions:`
+  );
 }
 
 export async function getAIFlashcards(text: string) {
   return callTogetherAI(
-    `Make 5-10 flashcards from this text. Each flashcard must be in this format:\nQ: [question]\nA: [answer]\nNo explanation. Only output flashcards.\n${text}\nFlashcards:`
-  )
+    `You are an AI assistant. Create 8 high-quality flashcards from the following chapter.
+
+Each flashcard format must be:
+Q: [question]
+A: [short answer]
+
+Avoid repeating phrases. Keep answers helpful but short.
+
+Only return flashcards.
+
+Text:
+${text}
+
+Flashcards:`
+  );
 }
 
 export async function getAIAnswer(text: string, question: string) {
