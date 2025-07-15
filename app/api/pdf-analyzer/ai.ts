@@ -83,7 +83,7 @@ export async function getAIMCQs(text: string) {
   return callTogetherAI(
     `You are an AI teacher creating a multiple-choice quiz. 
 
-Generate 5 unique MCQs from the following text. 
+Generate unique MCQs from the following text. 
 
 Each question must have:
 • 1 question
