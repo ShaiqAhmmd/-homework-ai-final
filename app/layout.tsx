@@ -1,5 +1,3 @@
-'use client';
-
 import { ClerkProvider, useUser } from '@clerk/nextjs';
 import FooterSection from './components/FooterSection';
 import HeaderSection from './components/HeaderSection';
