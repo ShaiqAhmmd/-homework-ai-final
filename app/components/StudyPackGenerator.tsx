@@ -7,17 +7,15 @@ import { useUserInfo } from '@/hooks/useUserInfo';
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
-  const [file, setFile] = useState<File | null>(null);
   const [summary, setSummary] = useState('');
   const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
   const [quiz, setQuiz] = useState<{ question: string; options: string[]; answer: string }[]>([]);
   const [warning, setWarning] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const { isPro } = useUserInfo();
 
-  // ✅ File Upload Handler (PDF or Image)
+  // ✅ Upload Handler
   async function handleUpload(file: File) {
     const formData = new FormData();
     formData.append('file', file);
@@ -29,27 +27,24 @@ export default function StudyPackGenerator() {
       });
 
       const data = await res.json();
-      if (data.text && typeof data.text === 'string') {
-        setInput(data.text); // 🔁 Keep it full, don’t trim
+      if (data && data.text) {
+        setInput(data.text); // don't trim!
         setWarning('');
       } else {
-        alert('❌ Failed to extract readable text from uploaded file.');
+        alert(data.error || '❌ Failed to extract readable text.');
       }
     } catch (err) {
-      console.error('❌ Upload failed:', err);
-      alert('Error uploading and extracting text.');
+      console.error('Upload failed:', err);
+      alert('❌ File upload error');
     }
   }
 
-  const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0];
-    if (selected) {
-      setFile(selected);
-      handleUpload(selected);
-    }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleUpload(file);
   };
 
-  // ✅ Full Study Pack Generator
+  // ✅ Study Pack Gen
   async function generatePack() {
     if (!input.trim()) return;
 
@@ -60,9 +55,13 @@ export default function StudyPackGenerator() {
     setQuiz([]);
     setWarning('');
 
-    const AI_LIMIT = 8000;
     const fullText = input.trim();
-    const limitedText = fullText.length > AI_LIMIT ? fullText.slice(0, AI_LIMIT) : fullText;
+    const limit = 8000;
+    const limitedText = fullText.slice(0, limit);
+
+    if (fullText.length > limit) {
+      setWarning('⚠️ Only the first 8000 characters were analyzed due to AI limits.');
+    }
 
     try {
       const res = await fetch('/api/pdf-analyzer/analyze', {
@@ -72,42 +71,36 @@ export default function StudyPackGenerator() {
       });
 
       const data = await res.json();
-
-      if (data.warning) {
-        setWarning(data.warning); // 🟨 Only analyzing part of text
-      }
-
       setSummary(data.summary || '');
       setFlashcards(data.flashcards || []);
       setQuiz(data.mcqs || []);
     } catch {
-      setError('❌ Failed to generate study pack. Try again later.');
+      setError('❌ Generation failed.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div>
-      {/* Text Input */}
+    <section>
       <textarea
         className="w-full border border-gray-300 rounded p-3 mb-4 text-sm"
         rows={6}
-        placeholder="Paste your textbook, lecture, or notes..."
+        placeholder="Paste your notes or lecture..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <label className="bg-gray-100 px-4 py-2 rounded border cursor-pointer hover:bg-gray-200 transition">
+      <div className="flex items-center gap-4 mb-4">
+        <label className="cursor-pointer bg-gray-100 px-4 py-2 border rounded hover:bg-gray-200 transition">
           📂 Upload PDF or Image
-          <input type="file" accept=".pdf,image/*" hidden onChange={handleSelectFile} />
+          <input type="file" accept=".pdf,image/*" hidden onChange={handleFileChange} />
         </label>
 
         <button
           onClick={generatePack}
           disabled={loading}
-          className="bg-purple-600 text-white font-bold px-5 py-2 rounded hover:bg-purple-700 transition disabled:opacity-50"
+          className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition disabled:opacity-50"
         >
           {loading ? 'Generating...' : '🎓 Generate Study Pack'}
         </button>
@@ -115,54 +108,49 @@ export default function StudyPackGenerator() {
 
       {/* Warning */}
       {warning && (
-        <div className="bg-yellow-100 text-yellow-900 p-3 mb-4 rounded text-sm shadow">
-          ⚠️ {warning}
-        </div>
+        <p className="text-yellow-800 bg-yellow-100 p-2 rounded text-sm mb-4">{warning}</p>
       )}
 
-      {/* Error */}
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-red-600">{error}</p>}
 
-      {/* Summary */}
+      {/* SUMMARY */}
       {summary && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">📝 Summary</h3>
           <div className="p-4 bg-white border rounded whitespace-pre-wrap">{summary}</div>
-          <div className="mt-3">
-            <ExportPDFButton content={summary} filename="summary.pdf" />
-          </div>
+          <ExportPDFButton content={summary} filename="summary.pdf" />
         </section>
       )}
 
-      {/* Flashcards */}
+      {/* FLASHCARDS */}
       {flashcards.length > 0 && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧠 Flashcards</h3>
           {isPro ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {flashcards.map((card, i) => (
                   <div key={i} className="bg-blue-50 p-3 rounded shadow border">
                     <p><strong>Q:</strong> {card.q}</p>
-                    <p className="text-green-700 mt-1"><strong>A:</strong> {card.a}</p>
+                    <p className="text-green-700"><strong>A:</strong> {card.a}</p>
                   </div>
                 ))}
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-4 mt-3">
                 <ExportCSVButton data={flashcards} filename="flashcards.csv" />
-                <ExportPDFButton content={flashcards.map(fc => `Q: ${fc.q}\nA: ${fc.a}`).join('\n\n')} filename="flashcards.pdf" />
+                <ExportPDFButton content={flashcards.map(card => `Q: ${card.q}\nA: ${card.a}`).join('\n\n')} filename="flashcards.pdf" />
               </div>
             </>
           ) : (
-            <div className="bg-yellow-100 text-yellow-900 p-3 rounded mt-2">
-              🔐 Pro Required: Export flashcards to PDF/CSV with Pro.  
-              <a href="/pricing" className="ml-2 text-blue-600 underline">Upgrade</a>
-            </div>
+            <p className="text-yellow-900 bg-yellow-100 p-2 rounded">
+              🔒 Exporting flashcards is a Pro feature.  
+              <a href="/pricing" className="underline ml-1 text-blue-600">Upgrade</a>
+            </p>
           )}
         </section>
       )}
 
-      {/* Quiz */}
+      {/* QUIZ */}
       {quiz.length > 0 && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
@@ -182,13 +170,13 @@ export default function StudyPackGenerator() {
           </div>
 
           {!isPro && (
-            <div className="text-yellow-900 bg-yellow-100 p-2 rounded mt-4 text-sm">
-              🚫 Free users see 2 quiz questions.  
-              <a className="underline ml-1 text-blue-600" href="/pricing">Unlock Full Quiz</a>
-            </div>
+            <p className="text-yellow-900 bg-yellow-100 p-2 mt-3 rounded">
+              Only Pro users see full quiz.  
+              <a href="/pricing" className="underline text-blue-600 ml-1">Upgrade</a>
+            </p>
           )}
         </section>
       )}
-    </div>
+    </section>
   );
 }
