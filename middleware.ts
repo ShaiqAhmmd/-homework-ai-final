@@ -16,8 +16,7 @@ export default clerkMiddleware((auth, request) => {
   return NextResponse.next();
 });
 
+// ✅ This matcher applies Clerk to ALL routes except static
 export const config = {
-  matcher: [
-    '/((?!api|auth|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

@@ -8,14 +8,13 @@ export async function GET() {
     await connectToDatabase();
     const { userId } = await auth();
 
-    if (!userId) {
-      return NextResponse.json({ count: 0 }, { status: 401 });
-    }
+    const count = userId
+      ? await Referral.countDocuments({ referringUser: userId })
+      : 0;
 
-    const count = await Referral.countDocuments({ referringUser: userId });
     return NextResponse.json({ count });
   } catch (err) {
-    console.error('❌ /api/user/referral-count error:', err);
+    console.error('❌ /api/referral-count error:', err);
     return NextResponse.json({ count: 0 }, { status: 500 });
   }
 }
