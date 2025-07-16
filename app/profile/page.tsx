@@ -12,13 +12,13 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [resCount, resId] = await Promise.all([
-          fetch('/api/user/referral-count'),
-          fetch('/api/user/id')
-        ]);
+    const [res1, res2] = await Promise.all([
+  fetch('/api/user/referral-count'),
+  fetch('/api/user/id'),
+]);
 
-        const countData = await resCount.json();
-        const idData = await resId.json();
+const countData = res1.ok ? await res1.json() : { count: 0 };
+const idData = res2.ok ? await res2.json() : { userId: null };
 
         if (idData.userId) {
           setReferralLink(`https://homework-ai-final.vercel.app/?ref=${idData.userId}`);

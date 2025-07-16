@@ -4,12 +4,18 @@ import Referral from '@/models/Referral';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  await connectToDatabase();
-  const { userId } = await auth();
+  try {
+    await connectToDatabase();
+    const { userId } = await auth();
 
-  const count = userId
-    ? await Referral.countDocuments({ referringUser: userId })
-    : 0;
+    if (!userId) {
+      return NextResponse.json({ count: 0 }, { status: 401 });
+    }
 
-  return NextResponse.json({ count });
+    const count = await Referral.countDocuments({ referringUser: userId });
+    return NextResponse.json({ count });
+  } catch (err) {
+    console.error('❌ /api/user/referral-count error:', err);
+    return NextResponse.json({ count: 0 }, { status: 500 });
+  }
 }
