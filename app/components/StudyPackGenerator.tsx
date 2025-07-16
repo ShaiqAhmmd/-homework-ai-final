@@ -15,27 +15,25 @@ export default function StudyPackGenerator() {
   const [error, setError] = useState('');
   const { isPro } = useUserInfo();
 
-  // ✅ Upload Handler
   async function handleUpload(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/pdf-analyzer/upload', {
+      const res = await fetch('https://your-railway-backend-url/extract', {
         method: 'POST',
         body: formData,
       });
 
       const data = await res.json();
-      if (data && data.text) {
-        setInput(data.text); // don't trim!
+      if (data.text) {
+        setInput(data.text);
         setWarning('');
       } else {
-        alert(data.error || '❌ Failed to extract readable text.');
+        alert(data.error || 'Failed to extract text from uploaded file.');
       }
     } catch (err) {
-      console.error('Upload failed:', err);
-      alert('❌ File upload error');
+      alert('Upload failed. Try again.');
     }
   }
 
@@ -44,7 +42,6 @@ export default function StudyPackGenerator() {
     if (file) handleUpload(file);
   };
 
-  // ✅ Study Pack Gen
   async function generatePack() {
     if (!input.trim()) return;
 
@@ -55,11 +52,10 @@ export default function StudyPackGenerator() {
     setQuiz([]);
     setWarning('');
 
-    const fullText = input.trim();
-    const limit = 8000;
-    const limitedText = fullText.slice(0, limit);
+    const maxChars = 8000;
+    const limitedText = input.length > maxChars ? input.slice(0, maxChars) : input;
 
-    if (fullText.length > limit) {
+    if (input.length > maxChars) {
       setWarning('⚠️ Only the first 8000 characters were analyzed due to AI limits.');
     }
 
@@ -71,30 +67,31 @@ export default function StudyPackGenerator() {
       });
 
       const data = await res.json();
+
       setSummary(data.summary || '');
       setFlashcards(data.flashcards || []);
       setQuiz(data.mcqs || []);
     } catch {
-      setError('❌ Generation failed.');
+      setError('Failed to generate study pack.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section>
+    <div>
       <textarea
         className="w-full border border-gray-300 rounded p-3 mb-4 text-sm"
         rows={6}
-        placeholder="Paste your notes or lecture..."
+        placeholder="Paste your textbook, lecture, or notes..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
 
       <div className="flex items-center gap-4 mb-4">
         <label className="cursor-pointer bg-gray-100 px-4 py-2 border rounded hover:bg-gray-200 transition">
-          📂 Upload PDF or Image
-          <input type="file" accept=".pdf,image/*" hidden onChange={handleFileChange} />
+          📂 Upload PDF
+          <input type="file" accept=".pdf" hidden onChange={handleFileChange} />
         </label>
 
         <button
@@ -106,14 +103,12 @@ export default function StudyPackGenerator() {
         </button>
       </div>
 
-      {/* Warning */}
       {warning && (
         <p className="text-yellow-800 bg-yellow-100 p-2 rounded text-sm mb-4">{warning}</p>
       )}
 
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* SUMMARY */}
       {summary && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">📝 Summary</h3>
@@ -122,7 +117,6 @@ export default function StudyPackGenerator() {
         </section>
       )}
 
-      {/* FLASHCARDS */}
       {flashcards.length > 0 && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧠 Flashcards</h3>
@@ -150,7 +144,6 @@ export default function StudyPackGenerator() {
         </section>
       )}
 
-      {/* QUIZ */}
       {quiz.length > 0 && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
@@ -177,6 +170,6 @@ export default function StudyPackGenerator() {
           )}
         </section>
       )}
-    </section>
+    </div>
   );
 }
