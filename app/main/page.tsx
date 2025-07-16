@@ -7,11 +7,13 @@ import SocialShareButtons from '../components/SocialShareButtons'
 import HowItWorksSection from '../components/HowItWorksSection'
 import ChatPreviewSection from '../components/ChatPreviewSection'
 import WhyChooseSection from '../components/WhyChooseSection'
+import StudyPackGenerator from '../components/StudyPackGenerator';
 
 export default function Home() {
   return (
     <>
       <MainSection />
+      <StudyPackGenerator />
        <HowItWorksSection />
        <ChatPreviewSection />
       <SubjectsSection />
