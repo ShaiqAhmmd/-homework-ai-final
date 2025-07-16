@@ -20,10 +20,12 @@ export default function StudyPackGenerator() {
     formData.append('file', file);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_PDF_BACKEND_URL}/extract`, {
-        method: 'POST',
-        body: formData,
-      });
+   const backendUrl = process.env.NEXT_PUBLIC_PDF_BACKEND_URL;
+
+const res = await fetch(`${backendUrl}/extract`, {
+  method: 'POST',
+  body: formData,
+});
 
       const data = await res.json();
       if (data.text) {
