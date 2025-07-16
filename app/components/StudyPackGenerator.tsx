@@ -7,17 +7,44 @@ import { useUserInfo } from '@/hooks/useUserInfo';
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [summary, setSummary] = useState('');
   const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
-  const [quiz, setQuiz] = useState<
-    { question: string; options: string[]; answer: string }[]
-  >([]);
+  const [quiz, setQuiz] = useState<{ question: string; options: string[]; answer: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { isPro } = useUserInfo();
+
+  async function handleUpload(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/pdf-analyzer/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.text) {
+      setInput(data.text);
+    } else {
+      alert('Failed to extract text from uploaded file.');
+    }
+  }
+
+  const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (selected) {
+      setFile(selected);
+      handleUpload(selected);
+    }
+  };
 
   async function generatePack() {
     if (!input.trim()) return;
+
     setLoading(true);
+    setError('');
     setSummary('');
     setFlashcards([]);
     setQuiz([]);
@@ -28,61 +55,95 @@ export default function StudyPackGenerator() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: input }),
       });
-
       const data = await res.json();
-
       setSummary(data.summary || '');
-      setQuiz(data.mcqs || []);
       setFlashcards(data.flashcards || []);
+      setQuiz(data.mcqs || []);
     } catch {
-      alert('Failed to generate study pack');
+      setError('🔴 Failed to generate study pack. Try again.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section className="py-12">
-      <h2 className="text-2xl font-bold mb-4">🎓 Study Pack Generator</h2>
-
+    <div>
       <textarea
-        rows={6}
-        className="w-full border border-gray-300 rounded p-2"
-        placeholder="Paste your textbook paragraph, topic, notes, or lectures..."
+        className="w-full border border-gray-300 rounded p-3 mb-4"
+        rows={5}
+        placeholder="Paste your textbook paragraph, notes, or lecture..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
 
-      <button
-        onClick={generatePack}
-        disabled={loading}
-        className="mt-4 bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition disabled:opacity-50"
-      >
-        {loading ? 'Generating...' : '🎓 Generate Study Pack'}
-      </button>
+      <div className="flex flex-wrap gap-4 mb-6">
+        <label className="bg-gray-100 px-4 py-2 rounded border cursor-pointer hover:bg-gray-200 transition">
+          📂 Upload PDF or Image
+          <input type="file" accept=".pdf,image/*" hidden onChange={handleSelectFile} />
+        </label>
 
-      {/* 📄 Summary */}
+        <button
+          onClick={generatePack}
+          disabled={loading}
+          className="bg-purple-600 text-white font-bold px-5 py-2 rounded hover:bg-purple-700 transition disabled:opacity-50"
+        >
+          {loading ? 'Generating...' : '🎓 Generate Study Pack'}
+        </button>
+      </div>
+
+      {error && <p className="text-red-600">{error}</p>}
+
+      {/* 📝 Summary */}
       {summary && (
-        <>
-          <h3 className="mt-10 mb-2 text-xl font-semibold">📝 Summary</h3>
-          <div className="bg-white p-4 rounded shadow whitespace-pre-line mb-4">{summary}</div>
-          <ExportPDFButton content={summary} filename="summary.pdf" />
-        </>
+        <section className="mb-6">
+          <h3 className="text-xl font-bold mb-2">📝 Summary</h3>
+          <div className="p-4 bg-white border rounded whitespace-pre-wrap">{summary}</div>
+          <div className="mt-3">
+  <ExportPDFButton content={summary} filename="summary.pdf" />
+</div>
+        </section>
+      )}
+
+      {/* 🧠 Flashcards */}
+      {flashcards.length > 0 && (
+        <section className="mb-6">
+          <h3 className="text-xl font-bold mb-2">🧠 Flashcards</h3>
+
+          {isPro ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {flashcards.map((card, i) => (
+                  <div key={i} className="bg-blue-50 p-3 rounded shadow border">
+                    <p><strong>Q:</strong> {card.q}</p>
+                    <p className="text-green-700 mt-1"><strong>A:</strong> {card.a}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-4 mt-3">
+                <ExportCSVButton data={flashcards} filename="flashcards.csv" />
+                <ExportPDFButton content={flashcards.map(fc => `Q: ${fc.q}\nA: ${fc.a}`).join('\n\n')} filename="flashcards.pdf" />
+              </div>
+            </>
+          ) : (
+            <div className="bg-yellow-100 text-yellow-900 p-3 my-4 rounded">
+              🔒 Pro Required: Exporting flashcards requires Pro.  
+              <a href="/pricing" className="ml-2 text-blue-600 underline">Upgrade</a>
+            </div>
+          )}
+        </section>
       )}
 
       {/* 🧪 Quiz */}
       {quiz.length > 0 && (
-        <>
-          <h3 className="mt-10 mb-2 text-xl font-semibold">🧪 Quiz</h3>
+        <section>
+          <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
           <div className="space-y-6">
             {quiz.slice(0, isPro ? quiz.length : 2).map((q, i) => (
-              <div key={i} className="bg-white p-4 rounded shadow-sm">
-                <p className="font-semibold">Q{i + 1}. {q.question}</p>
-                <ul className="list-disc ml-6 mt-1">
-                  {q.options.map((opt, idx) => (
-                    <li key={idx} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>
-                      {opt}
-                    </li>
+              <div key={i} className="bg-white p-4 border rounded shadow-sm">
+                <p className="font-semibold mb-2">Q{i + 1}. {q.question}</p>
+                <ul className="list-disc ml-6">
+                  {q.options.map((opt, j) => (
+                    <li key={j} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>{opt}</li>
                   ))}
                 </ul>
               </div>
@@ -90,45 +151,13 @@ export default function StudyPackGenerator() {
           </div>
 
           {!isPro && (
-            <p className="text-yellow-900 bg-yellow-100 p-2 rounded mt-2 text-sm">
-              🔒 Pro users can unlock full quizzes. 
-              <a className="underline text-blue-600 ml-1" href="/pricing">Upgrade Now</a>
+            <p className="text-yellow-900 bg-yellow-100 p-2 mt-4 rounded">
+              👀 Only 2 quiz questions shown for free users.  
+              <a className="underline ml-1 text-blue-600" href="/pricing">Upgrade to Pro</a>
             </p>
           )}
-        </>
+        </section>
       )}
-
-      {/* 🧠 Flashcards */}
-      {flashcards.length > 0 && (
-        <>
-          <h3 className="mt-10 mb-2 text-xl font-semibold">🧠 Flashcards</h3>
-
-          {isPro ? (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                {flashcards.map((f, i) => (
-                  <div key={i} className="bg-white p-3 rounded shadow border">
-                    <p><strong>Q:</strong> {f.q}</p>
-                    <p className="text-green-700"><strong>A:</strong> {f.a}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-4">
-                <ExportCSVButton data={flashcards} filename="flashcards.csv" />
-                <ExportPDFButton
-                  content={flashcards.map(f => `Q: ${f.q}\nA: ${f.a}`).join('\n\n')}
-                  filename="flashcards.pdf"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="bg-yellow-100 text-yellow-900 p-3 rounded my-4">
-              🔒 Flashcard export is for Pro users only.  
-              <a href="/pricing" className="underline text-blue-600 ml-1">Upgrade</a>
-            </div>
-          )}
-        </>
-      )}
-    </section>
+    </div>
   );
 }

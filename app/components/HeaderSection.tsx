@@ -22,6 +22,9 @@ export default function HeaderSection() {
         <nav className="hidden md:flex items-center gap-4">
           <Link href="/chat" className="font-semibold hover:underline underline-offset-4 transition">Chat</Link>
           <Link href="/pricing" className="font-semibold hover:underline underline-offset-4 transition">Pricing</Link>
+          <Link href="/study-pack" className="font-semibold hover:underline underline-offset-4 transition">
+  Study Pack
+</Link>
           <Link href="/study-tools" className="font-semibold hover:underline underline-offset-4 transition">Study Tools</Link>
           <Link href="/pdf-analyzer" className="font-semibold hover:underline underline-offset-4 transition">PDF Analyzer</Link>
           <Link href="/profile" className="font-semibold hover:underline underline-offset-4 transition">Profile</Link>
@@ -63,6 +66,9 @@ export default function HeaderSection() {
         <div className="md:hidden bg-white rounded-b-xl shadow-lg mt-1 p-2 px-4 animate-fade-in flex flex-col gap-2 text-blue-700 font-medium">
           <Link href="/chat" className="py-2 border-b border-gray-100">Chat</Link>
           <Link href="/pricing" className="py-2 border-b border-gray-100">Pricing</Link>
+          <Link href="/study-pack" className="font-semibold hover:underline underline-offset-4 transition">
+  Study Pack
+</Link>
           <Link href="/study-tools" className="py-2 border-b border-gray-100">Study Tools</Link>
           <Link href="/profile" className="py-2 border-b border-gray-100">Profile</Link>
           <Link href="/pdf-analyzer" className="py-2">PDF Analyzer</Link>
