@@ -20,7 +20,7 @@ export default function StudyPackGenerator() {
     formData.append('file', file);
 
     try {
-      const res = await fetch('https://your-railway-backend-url/extract', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PDF_BACKEND_URL}/extract`, {
         method: 'POST',
         body: formData,
       });
