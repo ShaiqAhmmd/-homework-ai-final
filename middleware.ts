@@ -2,6 +2,7 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export default clerkMiddleware((auth, request) => {
+  // Preserve referral ?ref=... tracking
   const ref = request.nextUrl.searchParams.get('ref');
 
   if (ref) {
@@ -16,7 +17,9 @@ export default clerkMiddleware((auth, request) => {
   return NextResponse.next();
 });
 
-// ✅ This matcher applies Clerk to ALL routes except static
+// ✅ HUGE FIX: Make sure the `/api` routes are included in the matcher
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };
