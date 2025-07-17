@@ -6,17 +6,51 @@ import ExportPDFButton from './ExportPDFButton';
 import { useUserInfo } from '@/hooks/useUserInfo';
 
 type MCQ = {
-  q: string;
+  question: string;
   options: string[];
   answer: string;
-  explanation: string;
 };
+
+function QuickMCQ({ questions }: { questions: string[] }) {
+  // Dummy options for demo
+  const dummyOptions = [
+    'Option A',
+    'Option B',
+    'Option C',
+    'Option D',
+  ];
+
+  // Generate MCQs from questions
+  const mcqs: MCQ[] = questions.map(q => ({
+    question: q,
+    options: dummyOptions,
+    answer: dummyOptions[0], // Always first option correct for demo
+  }));
+
+  return (
+    <section>
+      <h3 className="text-xl font-bold mb-2">🧪 Quiz (Demo)</h3>
+      {mcqs.map((mcq, i) => (
+        <div key={i} className="border p-4 rounded shadow-sm bg-white mb-4">
+          <p className="font-semibold mb-2">Q{i + 1}. {mcq.question}</p>
+          <ul className="list-disc ml-6">
+            {mcq.options.map((opt, idx) => (
+              <li key={idx} className={opt === mcq.answer ? 'text-green-600 font-bold' : ''}>
+                {opt}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+  );
+}
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
   const [summary, setSummary] = useState('');
   const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
-  const [mcqs, setMcqs] = useState<MCQ[]>([]);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [warning, setWarning] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -56,7 +90,7 @@ export default function StudyPackGenerator() {
     setError('');
     setSummary('');
     setFlashcards([]);
-    setMcqs([]);
+    setQuestions([]);
     setWarning('');
 
     const maxChars = 8000;
@@ -77,42 +111,8 @@ export default function StudyPackGenerator() {
 
       setSummary(data.summary || '');
       setFlashcards(data.flashcards || []);
+      setQuestions(data.questions || []);
       setWarning(data.warning || '');
-
-      // Robust MCQ parsing
-      const rawMcqs = data.mcqs || [];
-      const parsedMcqs: MCQ[] = [];
-
-      rawMcqs.forEach((block: string) => {
-        // Example block format:
-        // Q: What is X?
-        // A. Option 1
-        // B. Option 2
-        // C. Option 3
-        // D. Option 4
-        // Answer: A
-        // Explanation: Because...
-
-        const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
-        if (lines.length < 6) return;
-
-        const questionLine = lines[0].replace(/^Q:\s*/i, '');
-        const options = lines.slice(1, 5).map(opt => opt.replace(/^[A-D][\.\)]\s*/, ''));
-        const answerLine = lines.find(line => /^Answer[:\s]/i.test(line)) || '';
-        const explanationLine = lines.find(line => /^Explanation[:\s]/i.test(line)) || '';
-
-        const answer = answerLine.replace(/^Answer[:\s]*/i, '').trim();
-        const explanation = explanationLine.replace(/^Explanation[:\s]*/i, '').trim();
-
-        parsedMcqs.push({
-          q: questionLine,
-          options,
-          answer,
-          explanation,
-        });
-      });
-
-      setMcqs(parsedMcqs);
     } catch {
       setError('Failed to generate study pack.');
     } finally {
@@ -177,26 +177,9 @@ export default function StudyPackGenerator() {
         </section>
       )}
 
-      {mcqs.length > 0 && (
-        <section className="mb-6">
-          <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
-          <div className="space-y-6">
-            {mcqs.map((q, i) => (
-              <div key={i} className="bg-white p-4 border rounded shadow-sm">
-                <p className="font-semibold mb-2">Q{i + 1}. {q.q}</p>
-                <ul className="list-disc ml-6">
-                  {q.options.map((opt, j) => (
-                    <li key={j} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>
-                      {opt}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-green-700 font-semibold">Answer: {q.answer}</p>
-                <p className="text-gray-600"><strong>Explanation:</strong> {q.explanation}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+      {/* Quick MCQ fallback */}
+      {questions.length > 0 && (
+        <QuickMCQ questions={questions} />
       )}
     </div>
   );
