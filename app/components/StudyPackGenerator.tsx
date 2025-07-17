@@ -135,24 +135,17 @@ export default function StudyPackGenerator() {
 
       {quiz.length > 0 && (
   <section>
-    <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
-    <div className="space-y-6">
-      {quiz.map((q, i) => (
-        <div key={i} className="border p-4 rounded shadow-sm bg-white">
-          <p className="font-semibold mb-2">Q{i + 1}. {q.question}</p>
-          <ul className="list-disc ml-6">
-            {q.options.map((opt, idx) => (
-              <li
-                key={idx}
-                className={opt === q.answer ? 'font-bold text-green-600' : ''}
-              >
-                {opt}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
+    <h3>🧪 Quiz</h3>
+    {quiz.map((q, i) => (
+      <div key={i}>
+        <p><strong>Q{i + 1}.</strong> {q.question}</p>  {/* Make sure this is here */}
+        <ul>
+          {q.options.map((opt, idx) => (
+            <li key={idx} className={opt === q.answer ? 'correct' : ''}>{opt}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
   </section>
 )}
     </div>

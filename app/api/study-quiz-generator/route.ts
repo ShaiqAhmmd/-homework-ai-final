@@ -18,9 +18,9 @@ ${text}
 Format the response as a JSON array like this:
 [
   {
-    "question": "Question text?",
-    "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-    "answer": "Correct option"
+    "question": "What is photosynthesis?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "answer": "Option B"
   },
   ...
 ]
