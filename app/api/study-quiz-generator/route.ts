@@ -9,8 +9,15 @@ export async function POST(req: NextRequest) {
   if (!text) return NextResponse.json({ error: 'No text provided' }, { status: 400 })
 
   const prompt = `
-Generate 5 multiple-choice quiz questions based on the following text. 
-Each question should have 4 options, and indicate the correct answer.
+You are an AI teacher. Generate 5 unique multiple-choice questions from the following text.
+
+Each question should have:
+- A clear question text
+- Four answer options labeled A, B, C, D
+- The correct answer label (A/B/C/D)
+- A short explanation
+
+Return the result as a JSON array with keys: question, options, answer, explanation.
 
 Text:
 ${text}

@@ -132,13 +132,12 @@ export default function StudyPackGenerator() {
           </div>
         </section>
       )}
-
-      {quiz.length > 0 && (
+{quiz.length > 0 && (
   <section>
     <h3>🧪 Quiz</h3>
     {quiz.map((q, i) => (
       <div key={i}>
-        <p><strong>Q{i + 1}.</strong> {q.question}</p>  {/* Make sure this is here */}
+        <p><strong>Q{i + 1}.</strong> {q.question}</p>
         <ul>
           {q.options.map((opt, idx) => (
             <li key={idx} className={opt === q.answer ? 'correct' : ''}>{opt}</li>
