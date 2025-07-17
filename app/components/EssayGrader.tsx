@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import ExportPDFButton from './ExportPDFButton';
 import ExportCSVButton from './ExportCSVButton';
-import { useUserInfo } from '@/hooks/useUserInfo';
 
 export default function EssayGrader() {
   const [input, setInput] = useState('');
@@ -10,7 +9,6 @@ export default function EssayGrader() {
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { isPro, loading: proLoading } = useUserInfo();
 
   async function handleGrade(e: React.FormEvent) {
     e.preventDefault();
@@ -39,7 +37,7 @@ export default function EssayGrader() {
 
   return (
     <section className="py-12">
-      <h2 className="text-2xl font-bold mb-4">📝 AI Essay Grader</h2>
+      <h2 className="text-2xl font-bold mb-4">AI Essay Grader</h2>
 
       <form onSubmit={handleGrade} className="bg-white p-6 space-y-4 shadow rounded">
         <textarea
@@ -66,19 +64,10 @@ export default function EssayGrader() {
 
       {feedback && (
         <>
-          {proLoading ? (
-            <p className="text-sm text-gray-400 mt-4">Checking Pro status...</p>
-          ) : isPro ? (
-            <div className="flex gap-4 my-4">
-              <ExportPDFButton content={feedback} filename="essay-feedback.pdf" />
-              <ExportCSVButton data={[{ feedback }]} filename="essay-feedback.csv" />
-            </div>
-          ) : (
-            <div className="bg-yellow-100 text-yellow-900 p-3 rounded my-4">
-              🔒 Export is only available to Pro users.  
-              <a href="/pricing" className="ml-2 text-blue-600 underline">Upgrade to Pro</a>
-            </div>
-          )}
+          <div className="flex gap-4 my-4">
+            <ExportPDFButton content={feedback} filename="essay-feedback.pdf" />
+            <ExportCSVButton data={[{ feedback }]} filename="essay-feedback.csv" />
+          </div>
 
           <div className="bg-gray-100 p-4 rounded whitespace-pre-line">{feedback}</div>
         </>

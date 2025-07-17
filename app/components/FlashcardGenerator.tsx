@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import ExportPDFButton from './ExportPDFButton';
 import ExportCSVButton from './ExportCSVButton';
-import { useUserInfo } from '@/hooks/useUserInfo';
 
 type Flashcard = { q: string; a: string };
 
@@ -11,7 +10,6 @@ export default function FlashcardGenerator() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isPro, loading: proLoading } = useUserInfo();
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -51,7 +49,7 @@ export default function FlashcardGenerator() {
 
   return (
     <section className="py-12">
-      <h2 className="text-2xl font-bold mb-4">🧠 AI Flashcard Generator</h2>
+      <h2 className="text-2xl font-bold mb-4">AI Flashcard Generator</h2>
 
       <form onSubmit={handleGenerate} className="bg-white p-6 shadow rounded space-y-4">
         <textarea
@@ -75,34 +73,23 @@ export default function FlashcardGenerator() {
       </form>
 
       {flashcards.length > 0 && (
-        <>
-          {proLoading ? (
-            <p className="mt-6 text-gray-400">Checking Pro status...</p>
-          ) : isPro ? (
-            <div className="my-4 flex gap-4">
-              <ExportPDFButton
-                content={flashcards.map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n\n')}
-                filename="flashcards.pdf"
-              />
-              <ExportCSVButton data={flashcards} filename="flashcards.csv" />
-            </div>
-          ) : (
-            <div className="bg-yellow-100 text-yellow-900 p-3 rounded shadow mt-6">
-              🔒 Pro Required: Export is disabled.  
-              <a href="/pricing" className="text-blue-600 underline ml-2">Upgrade</a>
-            </div>
-          )}
-
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {flashcards.map((f, i) => (
-              <div key={i} className="bg-blue-50 p-4 rounded shadow">
-                <p><strong>Q:</strong> {f.q}</p>
-                <p className="text-green-700 mt-2"><strong>A:</strong> {f.a}</p>
-              </div>
-            ))}
-          </div>
-        </>
+        <div className="mt-6 flex gap-4">
+          <ExportPDFButton
+            content={flashcards.map(f => `Q: ${f.q}\nA: ${f.a}`).join('\n\n')}
+            filename="flashcards.pdf"
+          />
+          <ExportCSVButton data={flashcards} filename="flashcards.csv" />
+        </div>
       )}
+
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {flashcards.map((f, i) => (
+          <div key={i} className="bg-blue-50 p-4 rounded shadow border">
+            <p><strong>Q:</strong> {f.q}</p>
+            <p className="text-green-700 mt-1"><strong>A:</strong> {f.a}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

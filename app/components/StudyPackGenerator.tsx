@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import ExportCSVButton from './ExportCSVButton';
 import ExportPDFButton from './ExportPDFButton';
-import { useUserInfo } from '@/hooks/useUserInfo';
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
@@ -13,19 +12,16 @@ export default function StudyPackGenerator() {
   const [warning, setWarning] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { isPro } = useUserInfo();
 
   async function handleUpload(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-   const backendUrl = process.env.NEXT_PUBLIC_PDF_BACKEND_URL;
-
-const res = await fetch(`${backendUrl}/extract`, {
-  method: 'POST',
-  body: formData,
-});
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PDF_BACKEND_URL}/extract`, {
+        method: 'POST',
+        body: formData,
+      });
 
       const data = await res.json();
       if (data.text) {
@@ -122,27 +118,18 @@ const res = await fetch(`${backendUrl}/extract`, {
       {flashcards.length > 0 && (
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧠 Flashcards</h3>
-          {isPro ? (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {flashcards.map((card, i) => (
-                  <div key={i} className="bg-blue-50 p-3 rounded shadow border">
-                    <p><strong>Q:</strong> {card.q}</p>
-                    <p className="text-green-700"><strong>A:</strong> {card.a}</p>
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            {flashcards.map((card, i) => (
+              <div key={i} className="bg-blue-50 p-3 rounded shadow border">
+                <p><strong>Q:</strong> {card.q}</p>
+                <p className="text-green-700 mt-1"><strong>A:</strong> {card.a}</p>
               </div>
-              <div className="flex gap-4 mt-3">
-                <ExportCSVButton data={flashcards} filename="flashcards.csv" />
-                <ExportPDFButton content={flashcards.map(card => `Q: ${card.q}\nA: ${card.a}`).join('\n\n')} filename="flashcards.pdf" />
-              </div>
-            </>
-          ) : (
-            <p className="text-yellow-900 bg-yellow-100 p-2 rounded">
-              🔒 Exporting flashcards is a Pro feature.  
-              <a href="/pricing" className="underline ml-1 text-blue-600">Upgrade</a>
-            </p>
-          )}
+            ))}
+          </div>
+          <div className="flex gap-4">
+            <ExportCSVButton data={flashcards} filename="flashcards.csv" />
+            <ExportPDFButton content={flashcards.map(card => `Q: ${card.q}\nA: ${card.a}`).join('\n\n')} filename="flashcards.pdf" />
+          </div>
         </section>
       )}
 
@@ -150,26 +137,17 @@ const res = await fetch(`${backendUrl}/extract`, {
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
           <div className="space-y-6">
-            {quiz.slice(0, isPro ? quiz.length : 2).map((q, i) => (
+            {quiz.map((q, i) => (
               <div key={i} className="bg-white p-4 border rounded shadow-sm">
                 <p className="font-semibold mb-2">Q{i + 1}. {q.question}</p>
                 <ul className="list-disc ml-6">
                   {q.options.map((opt, j) => (
-                    <li key={j} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>
-                      {opt}
-                    </li>
+                    <li key={j}>{opt}</li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-
-          {!isPro && (
-            <p className="text-yellow-900 bg-yellow-100 p-2 mt-3 rounded">
-              Only Pro users see full quiz.  
-              <a href="/pricing" className="underline text-blue-600 ml-1">Upgrade</a>
-            </p>
-          )}
         </section>
       )}
     </div>
