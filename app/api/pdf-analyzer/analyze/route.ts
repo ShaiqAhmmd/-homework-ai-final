@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAISummary, getAIQuestions, getAIFlashcards, getAIMCQs } from '../ai';
 
+type MCQ = {
+  q: string;
+  options: string[];
+  answer: string;
+  explanation: string;
+};
+
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
 
@@ -12,10 +19,11 @@ export async function POST(req: NextRequest) {
     limitedText = text.slice(0, 8000);
   }
 
+  // Generate AI content
   const summaryRaw = await getAISummary(limitedText);
   const questionsRaw = await getAIQuestions(limitedText);
   const flashcardsRaw = await getAIFlashcards(limitedText);
-  const mcqRaw = await getAIMCQs(limitedText); // ✅ NEW
+  const mcqRaw = await getAIMCQs(limitedText); // returns parsed JSON array
 
   // Clean summary
   const summary = summaryRaw
@@ -51,41 +59,24 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  // ✅ Parse MCQs
-  type MCQ = {
-    q: string;
-    options: string[];
-    answer: string;
-    explanation: string;
-  };
-
+  // Parse MCQs properly (mcqRaw is already parsed JSON array)
   const mcqs: MCQ[] = [];
-
-  mcqRaw.split(/Q:\s*/).forEach((block: string) => {
-  const lines = block.trim().split('\n').map((line: string) => line.trim()).filter(Boolean);
-  if (lines.length < 5) return; // skip incomplete blocks
-
-  const question = lines[0].replace(/^\d+\.\s*/, '').trim();
-
-  const options = lines.slice(1, 5).map((opt: string) => opt.replace(/^[A-D][\.\)]\s*/, ''));
-
-  const answerLine = lines.find((line: string) => /^Answer[:\s]/i.test(line)) || '';
-  const explanationLine = lines.find((line: string) => /^Explanation[:\s]/i.test(line)) || '';
-
-  const answer = answerLine.replace(/^Answer[:\s]*/i, '').trim();
-
-  const explanation = explanationLine.replace(/^Explanation[:\s]*/i, '').trim();
-
-  if (question && options.length === 4) {
-    mcqs.push({ q: question, options, answer, explanation });
+  if (Array.isArray(mcqRaw)) {
+    mcqRaw.forEach((item) => {
+      mcqs.push({
+        q: item.question,
+        options: item.options,
+        answer: item.answer,
+        explanation: item.explanation,
+      });
+    });
   }
-});
 
   return NextResponse.json({
     summary,
     questions,
     flashcards,
-    mcqs,      // ✅ returned to frontend
+    mcqs,
     warning,
   });
 }
