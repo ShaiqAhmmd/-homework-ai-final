@@ -1,34 +1,33 @@
-const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY!
+const TOGETHER_API_KEY = process.env.TOGETHER_API_KEY!;
 
 async function callTogetherAI(prompt: string) {
   try {
     const res = await fetch('https://api.together.xyz/v1/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${TOGETHER_API_KEY}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${TOGETHER_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'meta-llama/Llama-3-8b-chat-hf',
         prompt,
         max_tokens: 512,
         temperature: 0.2,
-        stop: null
-      })
-    })
-    const data = await res.json()
+        stop: null,
+      }),
+    });
+
+    const data = await res.json();
     if (!data.choices || !data.choices[0] || !data.choices[0].text) {
-      console.error('TogetherAI error:', data)
-      return '[AI error: No response]'
+      console.error('TogetherAI error:', data);
+      return '[AI error: No response]';
     }
-    return data.choices[0].text.trim()
+    return data.choices[0].text.trim();
   } catch (e) {
-    console.error('TogetherAI fetch error:', e)
-    return '[AI error: Fetch failed]'
+    console.error('TogetherAI fetch error:', e);
+    return '[AI error: Fetch failed]';
   }
 }
-
-// --- ULTRA-DIRECT PROMPTS ---
 
 export async function getAISummary(text: string) {
   return callTogetherAI(
@@ -47,7 +46,7 @@ Bullet Summary:
 
 export async function getAIQuestions(text: string) {
   return callTogetherAI(
-    `You are an AI teacher. Based on the following textbook content, write 8–12 unique study questions.
+    `You are an AI teacher. Based on the following textbook content, write 8-12 unique study questions.
 
 Avoid simple "What is..." questions. Include "how", "why", and "explain" style questions too.
 
@@ -80,10 +79,10 @@ Flashcards:`
 }
 
 export async function getAIMCQs(text: string) {
-  return callTogetherAI(
-    `You are an AI teacher creating a multiple-choice quiz. 
+  const raw = await callTogetherAI(
+    `You are an AI teacher creating a multiple-choice quiz.
 
-Generate unique MCQs from the following text. 
+Generate unique MCQs from the following text.
 
 Each question should have:
 - A clear question text
@@ -99,10 +98,26 @@ ${text}
 Quiz:
 Q:`
   );
+
+  try {
+    const jsonStart = raw.indexOf('[');
+    const jsonEnd = raw.lastIndexOf(']') + 1;
+    const jsonString = raw.substring(jsonStart, jsonEnd);
+    const parsed = JSON.parse(jsonString);
+    return parsed;
+  } catch (e) {
+    console.error('Failed to parse MCQ JSON:', e, raw);
+    return [];
+  }
 }
 
 export async function getAIAnswer(text: string, question: string) {
   return callTogetherAI(
-    `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
-  )
+    `Text:
+${text}
+Question:
+${question}
+
+Answer:`
+  );
 }
