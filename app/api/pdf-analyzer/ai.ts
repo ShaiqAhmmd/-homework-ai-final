@@ -82,7 +82,7 @@ export async function getAIMCQs(text: string) {
   const raw = await callTogetherAI(
     `You are an AI teacher creating a multiple-choice quiz.
 
-Generate unique MCQs from the following text.
+Generate 5 unique MCQs from the following text.
 
 Each question should have:
 - A clear question text
@@ -95,8 +95,7 @@ Return the result as a JSON array with keys: question, options, answer, explanat
 Text:
 ${text}
 
-Quiz:
-Q:`
+Quiz:`
   );
 
   try {
