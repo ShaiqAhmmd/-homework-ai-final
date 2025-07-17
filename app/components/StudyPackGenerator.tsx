@@ -3,15 +3,24 @@
 import { useState } from 'react';
 import ExportCSVButton from './ExportCSVButton';
 import ExportPDFButton from './ExportPDFButton';
+import { useUserInfo } from '@/hooks/useUserInfo';
+
+type MCQ = {
+  q: string;
+  options: string[];
+  answer: string;
+  explanation: string;
+};
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
   const [summary, setSummary] = useState('');
   const [flashcards, setFlashcards] = useState<{ q: string; a: string }[]>([]);
-  const [quiz, setQuiz] = useState<{ question: string; options: string[]; answer: string }[]>([]);
+  const [mcqs, setMcqs] = useState<MCQ[]>([]);
   const [warning, setWarning] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { isPro } = useUserInfo();
 
   async function handleUpload(file: File) {
     const formData = new FormData();
@@ -47,7 +56,7 @@ export default function StudyPackGenerator() {
     setError('');
     setSummary('');
     setFlashcards([]);
-    setQuiz([]);
+    setMcqs([]);
     setWarning('');
 
     const maxChars = 8000;
@@ -68,7 +77,42 @@ export default function StudyPackGenerator() {
 
       setSummary(data.summary || '');
       setFlashcards(data.flashcards || []);
-      setQuiz(data.mcqs || []);
+      setWarning(data.warning || '');
+
+      // Robust MCQ parsing
+      const rawMcqs = data.mcqs || [];
+      const parsedMcqs: MCQ[] = [];
+
+      rawMcqs.forEach((block: string) => {
+        // Example block format:
+        // Q: What is X?
+        // A. Option 1
+        // B. Option 2
+        // C. Option 3
+        // D. Option 4
+        // Answer: A
+        // Explanation: Because...
+
+        const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
+        if (lines.length < 6) return;
+
+        const questionLine = lines[0].replace(/^Q:\s*/i, '');
+        const options = lines.slice(1, 5).map(opt => opt.replace(/^[A-D][\.\)]\s*/, ''));
+        const answerLine = lines.find(line => /^Answer[:\s]/i.test(line)) || '';
+        const explanationLine = lines.find(line => /^Explanation[:\s]/i.test(line)) || '';
+
+        const answer = answerLine.replace(/^Answer[:\s]*/i, '').trim();
+        const explanation = explanationLine.replace(/^Explanation[:\s]*/i, '').trim();
+
+        parsedMcqs.push({
+          q: questionLine,
+          options,
+          answer,
+          explanation,
+        });
+      });
+
+      setMcqs(parsedMcqs);
     } catch {
       setError('Failed to generate study pack.');
     } finally {
@@ -88,8 +132,8 @@ export default function StudyPackGenerator() {
 
       <div className="flex items-center gap-4 mb-4">
         <label className="cursor-pointer bg-gray-100 px-4 py-2 border rounded hover:bg-gray-200 transition">
-          📂 Upload PDF
-          <input type="file" accept=".pdf" hidden onChange={handleFileChange} />
+          📂 Upload PDF or Image
+          <input type="file" accept=".pdf,image/*" hidden onChange={handleFileChange} />
         </label>
 
         <button
@@ -132,21 +176,28 @@ export default function StudyPackGenerator() {
           </div>
         </section>
       )}
-{quiz.length > 0 && (
-  <section>
-    <h3>🧪 Quiz</h3>
-    {quiz.map((q, i) => (
-      <div key={i}>
-        <p><strong>Q{i + 1}.</strong> {q.question}</p>
-        <ul>
-          {q.options.map((opt, idx) => (
-            <li key={idx} className={opt === q.answer ? 'correct' : ''}>{opt}</li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </section>
-)}
+
+      {mcqs.length > 0 && (
+        <section className="mb-6">
+          <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
+          <div className="space-y-6">
+            {mcqs.map((q, i) => (
+              <div key={i} className="bg-white p-4 border rounded shadow-sm">
+                <p className="font-semibold mb-2">Q{i + 1}. {q.q}</p>
+                <ul className="list-disc ml-6">
+                  {q.options.map((opt, j) => (
+                    <li key={j} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>
+                      {opt}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-green-700 font-semibold">Answer: {q.answer}</p>
+                <p className="text-gray-600"><strong>Explanation:</strong> {q.explanation}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

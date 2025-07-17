@@ -61,21 +61,25 @@ export async function POST(req: NextRequest) {
 
   const mcqs: MCQ[] = [];
 
-  mcqRaw.split(/Q:\s?/).forEach((block: { trim: () => { (): any; new(): any; split: { (arg0: RegExp): [any, ...any[]]; new(): any; }; }; }) => {
-    const [questionPart, ...rest] = block.trim().split(/\n/);
-    const options = rest.filter((line: string) => /^[A-D]\./.test(line)).map((line: string) => line.trim());
-    const answerLine = rest.find((line: string) => line.startsWith('Answer:')) || '';
-    const explanationLine = rest.find((line: string) => line.startsWith('Explanation:')) || '';
+  mcqRaw.split(/Q:\s*/).forEach((block: string) => {
+  const lines = block.trim().split('\n').map((line: string) => line.trim()).filter(Boolean);
+  if (lines.length < 5) return; // skip incomplete blocks
 
-    if (questionPart && options.length === 4) {
-      mcqs.push({
-        q: questionPart.trim(),
-        options,
-        answer: answerLine.replace('Answer:', '').trim(),
-        explanation: explanationLine.replace('Explanation:', '').trim(),
-      });
-    }
-  });
+  const question = lines[0].replace(/^\d+\.\s*/, '').trim();
+
+  const options = lines.slice(1, 5).map((opt: string) => opt.replace(/^[A-D][\.\)]\s*/, ''));
+
+  const answerLine = lines.find((line: string) => /^Answer[:\s]/i.test(line)) || '';
+  const explanationLine = lines.find((line: string) => /^Explanation[:\s]/i.test(line)) || '';
+
+  const answer = answerLine.replace(/^Answer[:\s]*/i, '').trim();
+
+  const explanation = explanationLine.replace(/^Explanation[:\s]*/i, '').trim();
+
+  if (question && options.length === 4) {
+    mcqs.push({ q: question, options, answer, explanation });
+  }
+});
 
   return NextResponse.json({
     summary,

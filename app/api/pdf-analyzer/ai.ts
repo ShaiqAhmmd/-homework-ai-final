@@ -85,22 +85,13 @@ export async function getAIMCQs(text: string) {
 
 Generate unique MCQs from the following text. 
 
-Each question must have:
-• 1 question
-• 4 options labeled A, B, C, D
-• The correct answer label (A/B/C/D)
-• A very short explanation
+Each question should have:
+- A clear question text
+- Four answer options labeled A, B, C, D
+- The correct answer label (A/B/C/D)
+- A short explanation
 
-Format:
-Q: [question]
-A. Option A
-B. Option B
-C. Option C
-D. Option D
-Answer: [A/B/C/D]
-Explanation: [short reason]
-
-Only return the MCQs and nothing else.
+Return the result as a JSON array with keys: question, options, answer, explanation.
 
 Text:
 ${text}
