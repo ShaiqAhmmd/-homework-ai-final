@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const summaryRaw = await getAISummary(limitedText);
   const questionsRaw = await getAIQuestions(limitedText);
   const flashcardsRaw = await getAIFlashcards(limitedText);
-  const mcqRaw = await getAIMCQs(limitedText);
+  const mcqRaw = await getAIMCQs(limitedText); // raw plain text MCQs
 
   // Clean summary
   const summary = summaryRaw
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     summary,
     questions,
     flashcards,
-    mcqRaw, // raw plain text MCQs
+    mcqs: mcqRaw, // renamed key to mcqs
     warning,
   });
 }

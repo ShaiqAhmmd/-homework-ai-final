@@ -3,12 +3,19 @@
 import { useState } from 'react';
 import { FileText, Upload, Download } from 'lucide-react';
 
+type MCQ = {
+  question: string;
+  options: string[];
+  answer: string;
+};
+
 export default function PDFAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [ai, setAI] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mcqs, setMcqs] = useState<MCQ[]>([]);
 
   // Sample PDFs
   const samplePDFs = [
@@ -22,7 +29,27 @@ export default function PDFAnalyzerPage() {
     },
   ];
 
-  // 1. Handle file upload
+  // Parse plain text MCQs from AI raw string
+  function parsePlainTextMCQs(raw: string): MCQ[] {
+    const questions: MCQ[] = [];
+    const blocks = raw.split(/\nQ\d+\./).filter(Boolean);
+
+    blocks.forEach(block => {
+      const lines = block.trim().split('\n').map(l => l.trim());
+      const question = lines[0];
+      const options = lines.slice(1, 5);
+      const answerLine = lines.find(l => l.startsWith('Answer:')) || '';
+      const answer = answerLine.replace('Answer:', '').trim();
+
+      if (question && options.length === 4) {
+        questions.push({ question, options, answer });
+      }
+    });
+
+    return questions;
+  }
+
+  // Handle file upload
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -32,6 +59,7 @@ export default function PDFAnalyzerPage() {
     setError(null);
     setAI(null);
     setText('');
+    setMcqs([]);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -51,7 +79,7 @@ export default function PDFAnalyzerPage() {
 
       setText(data.text);
 
-      // 2. Send to your AI backend
+      // Send to AI backend
       const res2 = await fetch('/api/pdf-analyzer/analyze', {
         method: 'POST',
         body: JSON.stringify({ text: data.text }),
@@ -61,6 +89,12 @@ export default function PDFAnalyzerPage() {
       });
       const aiData = await res2.json();
       setAI(aiData);
+
+      // Parse MCQs from raw string
+      if (aiData.mcqs) {
+        const parsed = parsePlainTextMCQs(aiData.mcqs);
+        setMcqs(parsed);
+      }
     } catch (e) {
       setError('Something went wrong. Please try again.');
     }
@@ -68,12 +102,13 @@ export default function PDFAnalyzerPage() {
     setLoading(false);
   }
 
-  // 2. Handle sample PDFs
+  // Handle sample PDFs
   async function handleSample(url: string) {
     setLoading(true);
     setError(null);
     setAI(null);
     setText('');
+    setMcqs([]);
 
     try {
       const res = await fetch(url);
@@ -91,7 +126,7 @@ export default function PDFAnalyzerPage() {
     setLoading(false);
   }
 
-  // 3. Export to .txt
+  // Export extracted text
   function exportText() {
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -102,7 +137,7 @@ export default function PDFAnalyzerPage() {
     URL.revokeObjectURL(url);
   }
 
-  // 4. Export flashcards to CSV
+  // Export flashcards CSV
   function exportFlashcardsCSV() {
     if (!ai?.flashcards?.length) return;
     const csv =
@@ -122,7 +157,6 @@ export default function PDFAnalyzerPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
-      {/* Title */}
       <h1 className="text-3xl font-extrabold mb-2 flex items-center justify-center gap-2">
         <FileText size={32} /> PDF Analyzer
       </h1>
@@ -131,7 +165,6 @@ export default function PDFAnalyzerPage() {
         <span className="block text-blue-600 font-semibold">Save hours of study time with AI-powered insights!</span>
       </p>
 
-      {/* Upload Controls */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         <button
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
@@ -164,7 +197,6 @@ export default function PDFAnalyzerPage() {
         </button>
       </div>
 
-      {/* Sample PDF Buttons */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         {samplePDFs.map((pdf) => (
           <button
@@ -177,7 +209,6 @@ export default function PDFAnalyzerPage() {
         ))}
       </div>
 
-      {/* AI Output */}
       {loading && (
         <div className="text-blue-600 mb-4">Extracting text from PDF or generating flashcards...</div>
       )}
@@ -238,39 +269,26 @@ export default function PDFAnalyzerPage() {
             )}
           </div>
 
-          {/* ✅ MCQ Section */}
+          {/* MCQ Section */}
           <div>
             <h2 className="font-semibold mb-2">MCQ Quiz</h2>
-            {ai.mcqs?.length ? (
+            {mcqs.length ? (
               <ul className="space-y-6">
-                {ai.mcqs.map(
-                  (
-                    mcq: {
-                      q: string;
-                      options: string[];
-                      answer: string;
-                      explanation: string;
-                    },
-                    i: number
-                  ) => (
-                    <li key={i} className="bg-white border p-4 rounded shadow">
-                      <p className="font-medium mb-2">
-                        <span className="text-purple-600">Q{i + 1}:</span> {mcq.q}
-                      </p>
-                      <ul className="ml-4 mb-2 list-disc">
-                        {mcq.options.map((opt: string, j: number) => (
-                          <li key={j}>{opt}</li>
-                        ))}
-                      </ul>
-                      <p className="text-green-600">
-                        <strong>Answer:</strong> {mcq.answer}
-                      </p>
-                      <p className="text-gray-600 text-sm">
-                        <strong>Explanation:</strong> {mcq.explanation}
-                      </p>
-                    </li>
-                  )
-                )}
+                {mcqs.map((mcq, i) => (
+                  <li key={i} className="bg-white border p-4 rounded shadow">
+                    <p className="font-medium mb-2">
+                      <span className="text-purple-600">Q{i + 1}:</span> {mcq.question}
+                    </p>
+                    <ul className="ml-4 mb-2 list-disc">
+                      {mcq.options.map((opt, j) => (
+                        <li key={j}>{opt}</li>
+                      ))}
+                    </ul>
+                    <p className="text-green-600">
+                      <strong>Answer:</strong> {mcq.answer}
+                    </p>
+                  </li>
+                ))}
               </ul>
             ) : (
               <div className="text-gray-400">No MCQs generated yet.</div>
