@@ -1,17 +1,35 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import ExportCSVButton from './ExportCSVButton';
 import ExportPDFButton from './ExportPDFButton';
 import { useUserInfo } from '@/hooks/useUserInfo';
 
 type MCQ = {
-  q: ReactNode;
   question: string;
   options: string[];
   answer: string;
-  explanation: string;
+  explanation?: string; // Made optional
 };
+
+function parsePlainTextMCQs(raw: string): MCQ[] {
+  const questions: MCQ[] = [];
+  const blocks = raw.split(/\nQ\d+\./).filter(Boolean);
+
+  blocks.forEach(block => {
+    const lines = block.trim().split('\n').map(l => l.trim());
+    const question = lines[0];
+    const options = lines.slice(1, 5);
+    const answerLine = lines.find(l => l.startsWith('Answer:')) || '';
+    const answer = answerLine.replace('Answer:', '').trim();
+
+    if (question && options.length === 4) {
+      questions.push({ question, options, answer });
+    }
+  });
+
+  return questions;
+}
 
 export default function StudyPackGenerator() {
   const [input, setInput] = useState('');
@@ -78,8 +96,14 @@ export default function StudyPackGenerator() {
 
       setSummary(data.summary || '');
       setFlashcards(data.flashcards || []);
-      setMcqs(data.mcqs || []);
       setWarning(data.warning || '');
+
+      if (data.mcqRaw) {
+        const parsedMCQs = parsePlainTextMCQs(data.mcqRaw);
+        setMcqs(parsedMCQs);
+      } else {
+        setMcqs([]);
+      }
     } catch {
       setError('Failed to generate study pack.');
     } finally {
@@ -143,27 +167,29 @@ export default function StudyPackGenerator() {
           </div>
         </section>
       )}
-{mcqs.length > 0 && (
-  <section>
-    <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
-    <div className="space-y-6">
-      {mcqs.map((q, i) => (
-        <div key={i} className="bg-white p-4 border rounded shadow-sm">
-          <p className="font-semibold mb-2">Q{i + 1}. {q.q}</p>
-          <ul className="list-disc ml-6">
-            {q.options.map((opt, j) => (
-              <li key={j} className={opt === q.answer ? 'text-green-600 font-bold' : ''}>
-                {opt}
-              </li>
+
+      {mcqs.length > 0 && (
+        <section className="mb-6">
+          <h3 className="text-xl font-bold mb-2">🧪 Quiz</h3>
+          <div className="space-y-6">
+            {mcqs.map((q, i) => (
+              <div key={i} className="bg-white p-4 border rounded shadow-sm">
+                <p className="font-semibold mb-2">Q{i + 1}. {q.question}</p>
+                <ul className="list-disc ml-6">
+                  {q.options.map((opt, j) => (
+                    <li key={j} className={opt.startsWith(q.answer) ? 'text-green-600 font-bold' : ''}>
+                      {opt}
+                    </li>
+                  ))}
+                </ul>
+                {q.explanation && (
+                  <p className="text-gray-600"><strong>Explanation:</strong> {q.explanation}</p>
+                )}
+              </div>
             ))}
-          </ul>
-          <p className="text-green-700 font-semibold">Answer: {q.answer}</p>
-          <p className="text-gray-600"><strong>Explanation:</strong> {q.explanation}</p>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

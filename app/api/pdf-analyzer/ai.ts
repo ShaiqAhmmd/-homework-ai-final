@@ -79,42 +79,26 @@ Flashcards:`
 }
 
 export async function getAIMCQs(text: string) {
-  const raw = await callTogetherAI(
+  return callTogetherAI(
     `You are an AI teacher creating a multiple-choice quiz.
 
-Generate 5 unique MCQs from the following text.
+Generate 5 multiple-choice questions from the following text.
 
-Each question should have:
-- A clear question text
-- Four answer options labeled A, B, C, D
-- The correct answer label (A/B/C/D)
-- A short explanation
+Format each question like this:
 
-Return the result as a JSON array with keys: question, options, answer, explanation.
+Q1. What is photosynthesis?
+A. Process by which plants make food
+B. Process of respiration
+C. Process of digestion
+D. Process of transpiration
+Answer: A
+
+Only output questions in this format, no JSON.
 
 Text:
 ${text}
-
-Quiz:`
+`
   );
-
-  // Robust JSON extraction and parsing
-  const jsonStart = raw.indexOf('[');
-  const jsonEnd = raw.lastIndexOf(']') + 1;
-
-  if (jsonStart === -1 || jsonEnd === -1) {
-    console.error('MCQ JSON not found in AI response:', raw);
-    return [];
-  }
-
-  const jsonString = raw.substring(jsonStart, jsonEnd);
-
-  try {
-    return JSON.parse(jsonString);
-  } catch (e) {
-    console.error('Failed to parse MCQ JSON:', e, jsonString);
-    return [];
-  }
 }
 
 export async function getAIAnswer(text: string, question: string) {

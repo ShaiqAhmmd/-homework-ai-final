@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAISummary, getAIQuestions, getAIFlashcards, getAIMCQs } from '../ai';
 
-type MCQ = {
-  q: string;
-  options: string[];
-  answer: string;
-  explanation: string;
-};
-
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
 
@@ -19,11 +12,10 @@ export async function POST(req: NextRequest) {
     limitedText = text.slice(0, 8000);
   }
 
-  // Generate AI content
   const summaryRaw = await getAISummary(limitedText);
   const questionsRaw = await getAIQuestions(limitedText);
   const flashcardsRaw = await getAIFlashcards(limitedText);
-  const mcqRaw = await getAIMCQs(limitedText); // returns parsed JSON array
+  const mcqRaw = await getAIMCQs(limitedText);
 
   // Clean summary
   const summary = summaryRaw
@@ -59,24 +51,11 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  // Parse MCQs properly (mcqRaw is already parsed JSON array)
-  const mcqs: MCQ[] = [];
-  if (Array.isArray(mcqRaw)) {
-    mcqRaw.forEach((item) => {
-      mcqs.push({
-        q: item.question,
-        options: item.options,
-        answer: item.answer,
-        explanation: item.explanation,
-      });
-    });
-  }
-
   return NextResponse.json({
     summary,
     questions,
     flashcards,
-    mcqs,
+    mcqRaw, // raw plain text MCQs
     warning,
   });
 }
