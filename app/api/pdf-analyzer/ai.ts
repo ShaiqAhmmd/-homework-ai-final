@@ -27,6 +27,11 @@ async function callTogetherAI(prompt: string) {
     return '[AI error: Fetch failed]'
   }
 }
+export async function getAIAnswer(text: string, question: string) {
+  return callTogetherAI(
+    `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
+  )
+}
 
 export async function getAISummary(text: string) {
   return callTogetherAI(
