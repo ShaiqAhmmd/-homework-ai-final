@@ -79,8 +79,8 @@ Flashcards:`
 }
 
 export async function getAIMCQs(text: string) {
-  const raw = await callTogetherAI(`
-You are an AI teacher creating a multiple-choice quiz.
+  const raw = await callTogetherAI(
+    `You are an AI teacher creating a multiple-choice quiz.
 
 Generate 5 unique MCQs from the following text.
 
@@ -95,13 +95,13 @@ Return the result as a JSON array with keys: question, options, answer, explanat
 Text:
 ${text}
 
-Quiz:
-Q:
-`);
+Quiz:`
+  );
 
-  // Try to extract JSON substring
+  // Robust JSON extraction and parsing
   const jsonStart = raw.indexOf('[');
   const jsonEnd = raw.lastIndexOf(']') + 1;
+
   if (jsonStart === -1 || jsonEnd === -1) {
     console.error('MCQ JSON not found in AI response:', raw);
     return [];
@@ -113,7 +113,6 @@ Q:
     return JSON.parse(jsonString);
   } catch (e) {
     console.error('Failed to parse MCQ JSON:', e, jsonString);
-    // Optional: try to fix common issues like trailing commas here
     return [];
   }
 }

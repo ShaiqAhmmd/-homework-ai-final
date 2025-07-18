@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       });
     });
   }
-console.log('Raw MCQ AI response:', mcqRaw);
+
   return NextResponse.json({
     summary,
     questions,
