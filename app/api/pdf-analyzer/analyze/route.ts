@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAISummary, getAIQuestions, getAIFlashcards, getAIMCQs } from '../ai'
+import { getAISummary, getAIQuestions, getAIFlashcards, getAIMCQs, getAIStudyPlan, getAIKeyConcepts } from '../ai'
 
 export async function POST(req: NextRequest) {
   const { text } = await req.json()
@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
   const questionsRaw = await getAIQuestions(limitedText)
   const flashcardsRaw = await getAIFlashcards(limitedText)
   const mcqRaw = await getAIMCQs(limitedText)
+  const studyPlanRaw = await getAIStudyPlan(limitedText)
+  const keyConceptsRaw = await getAIKeyConcepts(limitedText)
 
   // Clean summary
   const summary = summaryRaw
@@ -68,11 +70,28 @@ export async function POST(req: NextRequest) {
     }
   })
 
+  // Parse study plan
+  const studyPlan = studyPlanRaw
+    .replace(/^Study Plan:/i, '')
+    .split('\n')
+    .map((line: string) => line.trim())
+    .filter(Boolean)
+
+  // Parse key concepts
+  const keyConcepts = keyConceptsRaw
+    .replace(/^Key Concepts:/i, '')
+    .split(/,|\n/)
+    .map((k: string) => k.trim())
+    .filter(Boolean)
+    .filter((k: string | any[]) => k.length < 40)
+
   return NextResponse.json({
     summary,
     questions,
     flashcards,
     mcqs,
+    studyPlan,
+    keyConcepts,
     warning,
   })
 }

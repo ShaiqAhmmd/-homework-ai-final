@@ -27,11 +27,6 @@ async function callTogetherAI(prompt: string) {
     return '[AI error: Fetch failed]'
   }
 }
-export async function getAIAnswer(text: string, question: string) {
-  return callTogetherAI(
-    `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
-  )
-}
 
 export async function getAISummary(text: string) {
   return callTogetherAI(
@@ -68,5 +63,23 @@ Only output questions in this format, no JSON.
 Text:
 ${text}
 `
+  )
+}
+
+export async function getAIStudyPlan(text: string) {
+  return callTogetherAI(
+    `Based on this text, create a 1-week study plan for a high school student. List what to review each day in 1-2 sentences per day.\n${text}\nStudy Plan:`
+  )
+}
+
+export async function getAIKeyConcepts(text: string) {
+  return callTogetherAI(
+    `List the 10 most important concepts, formulas, or definitions from this text. Separate each with a comma.\n${text}\nKey Concepts:`
+  )
+}
+
+export async function getAIAnswer(text: string, question: string) {
+  return callTogetherAI(
+    `Text:\n${text}\n\nQuestion:\n${question}\n\nAnswer:`
   )
 }

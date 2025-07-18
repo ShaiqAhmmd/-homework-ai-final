@@ -13,6 +13,7 @@ export default function StudyPackGenerator() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
+  const [ai, setAI] = useState<any>(null)
 
   // 1. Handle file upload (PDF or image)
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -98,6 +99,7 @@ export default function StudyPackGenerator() {
       setMcqs(data.mcqs || [])
       setQuestions(data.questions || [])
       setWarning(data.warning || '')
+      setAI(data)
     } catch (err) {
       setError('Failed to generate study pack.')
     } finally {
@@ -141,6 +143,143 @@ export default function StudyPackGenerator() {
     a.download = (file?.name || 'mcqs') + '.csv'
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  // Quiz Mode for MCQs
+  function QuizMode({ mcqs }: { mcqs: { question: string, options: string[], answer: string }[] }) {
+    const [current, setCurrent] = useState(0)
+    const [selected, setSelected] = useState<string | null>(null)
+    const [score, setScore] = useState(0)
+    const [showResult, setShowResult] = useState(false)
+
+    if (!mcqs.length) return null
+
+    function handleSelect(opt: string) {
+      setSelected(opt)
+      if (opt === mcqs[current].answer) setScore(score + 1)
+    }
+
+    function next() {
+      setSelected(null)
+      if (current < mcqs.length - 1) setCurrent(current + 1)
+      else setShowResult(true)
+    }
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-xl font-bold mb-2">Quiz Mode</h3>
+        {showResult ? (
+          <div className="p-4 bg-green-100 rounded font-semibold">
+            Quiz complete! Your score: {score} / {mcqs.length}
+          </div>
+        ) : (
+          <div className="bg-white border rounded p-4 shadow-sm">
+            <div className="font-semibold mb-2">{current + 1}. {mcqs[current].question}</div>
+            <ul>
+              {mcqs[current].options.map((opt, i) => (
+                <li key={i}>
+                  <button
+                    className={`px-3 py-1 rounded mb-1 mr-2 border ${selected === opt ? (opt === mcqs[current].answer ? 'bg-green-200' : 'bg-red-200') : 'bg-gray-100'}`}
+                    disabled={!!selected}
+                    onClick={() => handleSelect(opt)}
+                  >
+                    {String.fromCharCode(65 + i)}. {opt}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {selected && (
+              <button className="mt-2 px-4 py-1 bg-blue-600 text-white rounded" onClick={next}>
+                {current < mcqs.length - 1 ? 'Next' : 'Finish'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Flashcard Review
+  function FlashcardReview({ flashcards }: { flashcards: { q: string, a: string }[] }) {
+    const [current, setCurrent] = useState(0)
+    const [showAnswer, setShowAnswer] = useState(false)
+    const [known, setKnown] = useState<number[]>([])
+
+    if (!flashcards.length) return null
+
+    function markKnown() {
+      setKnown([...known, current])
+      next()
+    }
+
+    function next() {
+      setShowAnswer(false)
+      setCurrent((current + 1) % flashcards.length)
+    }
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-xl font-bold mb-2">Flashcard Review</h3>
+        <div className="bg-white border rounded p-4 shadow-sm text-center">
+          <div className="font-semibold text-blue-700 mb-2">Q: {flashcards[current].q}</div>
+          {showAnswer ? (
+            <div className="text-green-700 mb-2">A: {flashcards[current].a}</div>
+          ) : (
+            <button className="px-4 py-1 bg-blue-600 text-white rounded" onClick={() => setShowAnswer(true)}>
+              Show Answer
+            </button>
+          )}
+          {showAnswer && (
+            <div className="mt-2 flex gap-2 justify-center">
+              <button className="px-3 py-1 bg-green-500 text-white rounded" onClick={markKnown}>I knew it</button>
+              <button className="px-3 py-1 bg-gray-300 rounded" onClick={next}>Next</button>
+            </div>
+          )}
+          <div className="mt-2 text-xs text-gray-500">
+            {known.length} / {flashcards.length} marked as known
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Ask AI Q&A
+  function AskAI({ text }: { text: string }) {
+    const [q, setQ] = useState('')
+    const [answer, setAnswer] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    async function handleAsk(e: React.FormEvent) {
+      e.preventDefault()
+      setLoading(true)
+      setAnswer('')
+      const res = await fetch('/api/pdf-analyzer/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, question: q })
+      })
+      const data = await res.json()
+      setAnswer(data.answer)
+      setLoading(false)
+    }
+
+    return (
+      <div className="mb-6">
+        <h3 className="text-xl font-bold mb-2">Ask AI about this PDF</h3>
+        <form onSubmit={handleAsk} className="flex gap-2 mb-2">
+          <input
+            className="flex-1 border px-3 py-1 rounded"
+            placeholder="Ask any question about this PDF..."
+            value={q}
+            onChange={e => setQ(e.target.value)}
+          />
+          <button className="bg-blue-600 text-white px-4 py-1 rounded" disabled={loading || !q}>
+            {loading ? 'Asking...' : 'Ask'}
+          </button>
+        </form>
+        {answer && <div className="bg-gray-50 p-2 rounded">{answer}</div>}
+      </div>
+    )
   }
 
   return (
@@ -199,7 +338,6 @@ export default function StudyPackGenerator() {
         <section className="mb-6">
           <h3 className="text-xl font-bold mb-2">Summary</h3>
           <div className="bg-gray-50 p-4 rounded whitespace-pre-wrap">{summary}</div>
-          <ExportPDFButton content={summary} filename="summary.pdf" />
         </section>
       )}
 
@@ -223,7 +361,6 @@ export default function StudyPackGenerator() {
               </div>
             ))}
           </div>
-          <ExportCSVButton data={flashcards} filename="flashcards.csv" />
         </section>
       )}
 
@@ -245,19 +382,17 @@ export default function StudyPackGenerator() {
               </div>
             ))}
           </div>
-          <ExportCSVButton
-            data={mcqs.map(m => ({
-              question: m.question,
-              A: m.options[0],
-              B: m.options[1],
-              C: m.options[2],
-              D: m.options[3],
-              answer: m.answer
-            }))}
-            filename="mcqs.csv"
-          />
         </section>
       )}
+
+      {/* Quiz Mode */}
+      {mcqs.length > 0 && <QuizMode mcqs={mcqs} />}
+
+      {/* Flashcard Review */}
+      {flashcards.length > 0 && <FlashcardReview flashcards={flashcards} />}
+
+      {/* Ask AI Q&A */}
+      {input && <AskAI text={input} />}
     </div>
   )
 }
